@@ -3,18 +3,35 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<meta name="theme-color" content="#6366f1">
-<title>ERP UMKM v8.2</title>
+<meta name="theme-color" content="#3f6212">
+<title>ERP UMKM v9.0</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📊</text></svg>">
 <script src="https://cdn.tailwindcss.com"></script>
+<script>
+  /* Remap warna indigo bawaan Tailwind ke palet hijau sawah brand kita.
+     Dipakai di beberapa aksen/link kecil (text-indigo-500/600) yang tadinya
+     mengikuti warna biru lama; warna semantik lain (blue/emerald/amber/dll
+     untuk status & kategori) TIDAK diubah supaya makna visualnya tetap. */
+  tailwind.config = {
+    theme: { extend: { colors: { indigo: {
+      50:'#f4f7ec', 100:'#e8ece3', 200:'#cdd9b8', 300:'#aec78c', 400:'#8aab5c',
+      500:'#4d7c0f', 600:'#3f6212', 700:'#365314', 800:'#2c4511', 900:'#1e3c00', 950:'#14290a'
+    } } } }
+  };
+</script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 <style>
 *{font-family:'Inter',sans-serif;-webkit-tap-highlight-color:transparent;box-sizing:border-box}
-:root{--bg:#f8fafc;--bg-card:#fff;--bg-soft:#f1f5f9;--bg-hover:#e2e8f0;--border:#e5e7eb;--border-soft:#f1f5f9;--text:#1e293b;--text-soft:#475569;--text-muted:#94a3b8;--primary:#6366f1;--primary-dark:#4f46e5;--primary-soft:#eef2ff;--success:#10b981;--warn:#f59e0b;--danger:#ef4444}
-[data-theme="dark"]{--bg:#0f172a;--bg-card:#1e293b;--bg-soft:#334155;--bg-hover:#475569;--border:#334155;--border-soft:#1e293b;--text:#f1f5f9;--text-soft:#cbd5e1;--text-muted:#94a3b8;--primary:#818cf8;--primary-dark:#6366f1;--primary-soft:#312e81}
+:root{--bg:#f8fafc;--bg-card:#fff;--bg-soft:#f1f5f9;--bg-hover:#e2e8f0;--border:#e5e7eb;--border-soft:#f1f5f9;--text:#1e293b;--text-soft:#475569;--text-muted:#94a3b8;--primary:#3f6212;--primary-dark:#1e3c00;--primary-soft:#e8ece3;--gold:#c9a227;--gold-soft:#faf3de;--success:#10b981;--warn:#f59e0b;--danger:#ef4444}
+[data-theme="dark"]{--bg:#0f172a;--bg-card:#1e293b;--bg-soft:#334155;--bg-hover:#475569;--border:#334155;--border-soft:#1e293b;--text:#f1f5f9;--text-soft:#cbd5e1;--text-muted:#94a3b8;--primary:#84cc16;--primary-dark:#65a30d;--primary-soft:#1a2e05;--gold:#e0bb4b;--gold-soft:#3a2f0d}
+.paddy-bg{position:relative;overflow:hidden}
+.paddy-bg::before{content:'';position:absolute;inset:0;pointer-events:none;opacity:.14;
+  background-image:repeating-linear-gradient(135deg,var(--gold) 0px,var(--gold) 2px,transparent 2px,transparent 18px),
+    repeating-linear-gradient(45deg,var(--gold) 0px,var(--gold) 2px,transparent 2px,transparent 26px);}
+.paddy-bg>*{position:relative}
 body{background:var(--bg);color:var(--text);margin:0;overflow-x:hidden;transition:background .2s,color .2s}
 .text-main{color:var(--text)}.text-soft{color:var(--text-soft)}.text-muted{color:var(--text-muted)}
 .bg-card{background:var(--bg-card)}.bg-soft{background:var(--bg-soft)}
@@ -78,11 +95,11 @@ body.sidebar-mini-mode .nav-parent:hover::after,body.sidebar-mini-mode .nav-item
 .status-badge::before{content:'';width:5px;height:5px;border-radius:50%;background:currentColor}
 .status-paid,.status-completed,.status-received,.status-active,.status-delivered,.status-approved,.status-closed{background:#d1fae5;color:#065f46}
 .status-pending,.status-draft,.status-processing,.status-open,.status-partial{background:#fef3c7;color:#92400e}
-.status-cancelled,.status-failed,.status-inactive,.status-returned,.status-rejected,.status-unpaid{background:#fee2e2;color:#991b1b}
+.status-cancelled,.status-failed,.status-inactive,.status-returned,.status-rejected,.status-unpaid,.status-refund{background:#fee2e2;color:#991b1b}
 .status-shipped,.status-picking,.status-packing{background:#dbeafe;color:#1e40af}
 [data-theme="dark"] .status-paid,[data-theme="dark"] .status-completed,[data-theme="dark"] .status-received,[data-theme="dark"] .status-active,[data-theme="dark"] .status-delivered,[data-theme="dark"] .status-approved,[data-theme="dark"] .status-closed{background:rgba(16,185,129,.15);color:#34d399}
 [data-theme="dark"] .status-pending,[data-theme="dark"] .status-draft,[data-theme="dark"] .status-processing,[data-theme="dark"] .status-open,[data-theme="dark"] .status-partial{background:rgba(245,158,11,.15);color:#fbbf24}
-[data-theme="dark"] .status-cancelled,[data-theme="dark"] .status-failed,[data-theme="dark"] .status-inactive,[data-theme="dark"] .status-returned,[data-theme="dark"] .status-rejected,[data-theme="dark"] .status-unpaid{background:rgba(239,68,68,.15);color:#f87171}
+[data-theme="dark"] .status-cancelled,[data-theme="dark"] .status-failed,[data-theme="dark"] .status-inactive,[data-theme="dark"] .status-returned,[data-theme="dark"] .status-rejected,[data-theme="dark"] .status-unpaid,[data-theme="dark"] .status-refund{background:rgba(239,68,68,.15);color:#f87171}
 [data-theme="dark"] .status-shipped,[data-theme="dark"] .status-picking,[data-theme="dark"] .status-packing{background:rgba(59,130,246,.15);color:#60a5fa}
 th.sortable{cursor:pointer;user-select:none;transition:color .15s}
 th.sortable:hover{color:var(--primary)!important}
@@ -147,7 +164,7 @@ mark{background:var(--primary-soft);color:var(--primary);padding:0 2px;border-ra
 <div id="bootScreen" class="fixed inset-0 z-[9999] flex flex-col items-center justify-center p-6 bg-card">
   <div id="bootLogo" class="w-16 h-16 rounded-2xl flex items-center justify-center text-white text-2xl font-bold loader-pulse shadow-lg" style="background:linear-gradient(135deg,var(--primary),var(--primary-dark))">E</div>
   <h1 id="bootName" class="mt-4 text-xl font-bold text-main">ERP UMKM</h1>
-  <p class="text-xs text-muted mt-1">Memuat sistem v8.2…</p>
+  <p class="text-xs text-muted mt-1">Memuat sistem v9.0…</p>
   <div id="bootSteps" class="mt-8 w-full max-w-xs space-y-2.5"></div>
   <div class="mt-6 w-full max-w-xs h-1 rounded overflow-hidden bg-soft"><div id="bootProgress" class="h-full transition-all duration-500" style="width:0%;background:linear-gradient(90deg,var(--primary),var(--primary-dark))"></div></div>
   <div id="bootError" class="hidden mt-6 w-full max-w-md">
@@ -168,7 +185,7 @@ mark{background:var(--primary-soft);color:var(--primary);padding:0 2px;border-ra
     <div class="w-full max-w-lg slide-up">
       <div class="rounded-2xl border p-6 sm:p-8 bg-card" style="border-color:var(--border)">
         <div class="flex items-center justify-center mb-6">
-          <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-white text-xl font-bold" style="background:linear-gradient(135deg,var(--primary),var(--primary-dark))">E</div>
+          <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-white text-xl font-bold paddy-bg" style="background:linear-gradient(135deg,var(--primary),var(--primary-dark))">E</div>
         </div>
         <h2 class="text-2xl font-bold text-center text-main mb-1">Selamat Datang</h2>
         <p class="text-sm text-muted text-center mb-8">Setup awal sistem ERP Anda</p>
@@ -190,7 +207,7 @@ mark{background:var(--primary-soft);color:var(--primary);padding:0 2px;border-ra
             <div><label class="block text-xs font-medium text-soft mb-1.5">Kota</label><input id="wizCity" placeholder="Jakarta" class="w-full px-3 py-2.5 border rounded-lg text-sm"></div>
           </div>
           <div><label class="block text-xs font-medium text-soft mb-1.5">Warna Brand</label>
-            <div class="flex gap-2"><input id="wizColor" type="color" value="#6366f1" class="w-14 h-10 rounded-lg border cursor-pointer" style="border-color:var(--border)"><input id="wizLogo" placeholder="Emoji atau huruf" class="flex-1 px-3 py-2 border rounded-lg text-sm" maxlength="2"></div>
+            <div class="flex gap-2"><input id="wizColor" type="color" value="#3f6212" class="w-14 h-10 rounded-lg border cursor-pointer" style="border-color:var(--border)"><input id="wizLogo" placeholder="Emoji atau huruf" class="flex-1 px-3 py-2 border rounded-lg text-sm" maxlength="2"></div>
           </div>
         </div>
         <div id="wizStep2" class="hidden space-y-4">
@@ -218,17 +235,17 @@ mark{background:var(--primary-soft);color:var(--primary);padding:0 2px;border-ra
           <button id="wizNext" onclick="wizardNext()" class="px-6 py-2.5 rounded-lg text-sm text-white font-medium shadow-lg" style="background:var(--primary)">Lanjut <i class="fa-solid fa-arrow-right ml-1"></i></button>
         </div>
       </div>
-      <p class="text-center text-[10px] text-muted mt-4">ERP UMKM v8.2 · Sync Backend v6.4</p>
+      <p class="text-center text-[10px] text-muted mt-4">ERP UMKM v9.0 · Sync Backend v6.5</p>
     </div>
   </div>
 </div>
 
 <!-- LOGIN -->
-<div id="loginScreen" class="hidden fixed inset-0 z-[8000] overflow-y-auto" style="background:linear-gradient(135deg,var(--primary),var(--primary-dark))">
+<div id="loginScreen" class="hidden fixed inset-0 z-[8000] overflow-y-auto paddy-bg" style="background:linear-gradient(135deg,var(--primary),var(--primary-dark))">
   <div class="min-h-screen flex items-center justify-center p-4">
     <div class="w-full max-w-md slide-up">
       <div class="rounded-2xl border overflow-hidden bg-card shadow-2xl" style="border-color:var(--border)">
-        <div class="p-6 text-center" style="background:linear-gradient(135deg,var(--primary),var(--primary-dark))">
+        <div class="p-6 text-center paddy-bg" style="background:linear-gradient(135deg,var(--primary),var(--primary-dark))">
           <div id="loginLogo" class="w-16 h-16 mx-auto rounded-2xl bg-white/20 backdrop-blur flex items-center justify-center text-white text-2xl font-bold mb-3">E</div>
           <h1 id="loginBrand" class="text-xl font-bold text-white">ERP UMKM</h1>
           <p class="text-xs text-white/70 mt-1">Sistem Manajemen Bisnis</p>
@@ -301,7 +318,7 @@ mark{background:var(--primary-soft);color:var(--primary);padding:0 2px;border-ra
     </header>
     <main id="content" class="flex-1 p-3 sm:p-5"></main>
     <footer class="text-center text-[10px] text-muted py-3 border-t bg-card" style="border-color:var(--border)">
-      <span id="footBrand">ERP UMKM</span> v8.2 · <span id="footStatus" class="text-emerald-500">Online</span> · <span id="footMs">-</span>
+      <span id="footBrand">ERP UMKM</span> v9.0 · <span id="footStatus" class="text-emerald-500">Online</span> · <span id="footMs">-</span>
     </footer>
   </div>
 </div>
@@ -326,18 +343,62 @@ mark{background:var(--primary-soft);color:var(--primary);padding:0 2px;border-ra
 
 <script>
 /* ============================================================
- *  ERP UMKM v8.2 — FRONTEND (SYNC BACKEND v6.4)
+ *  ERP UMKM v9.0 — FRONTEND (SYNC BACKEND v6.5)
+ * ============================================================
+ *  Changelog v9.0 (vs v8.2):
+ *   [CRITICAL BUG] Root cause "Cannot read properties of undefined (reading
+ *              'movements')" ditemukan & diperbaiki: prefetchPage() (dipicu hover/tap
+ *              menu) menelan error jadi `undefined` alih-alih reject; kalau navigasi asli
+ *              kebetulan memakai promise prefetch yang sama (lihat PAGE_INFLIGHT) dan
+ *              request itu gagal (server lambat/cold-start - lihat prefetchPage/
+ *              getPageData), pemanggilnya menerima `undefined` lalu meledak saat baca
+ *              `data.movements`. Sekarang promise yg disimpan tetap reject selayaknya.
+ *   [CRITICAL BUG] submitExp() dipanggil dari tombol "Simpan" pengeluaran tapi TIDAK
+ *              PERNAH didefinisikan - fitur Tambah Pengeluaran selama ini diam2 sama
+ *              sekali tidak berfungsi. Ditambahkan.
+ *   [PERF]     Boot sequence: layar login sekarang tampil SEGERA tanpa menunggu network
+ *              (ping/setup.status/dst dicek di background) - target "boot screen hilang →
+ *              login muncul < 300ms" tercapai utk kasus paling umum (belum ada sesi
+ *              tersimpan). Lihat boot()/_backgroundBootChecks().
+ *   [FEATURE]  withLock() - utility anti double-click/anti-spam-klik universal, dipakai
+ *              di SEMUA tombol submit (form generik, sale, PO, transfer, adjust, bundle,
+ *              opname, terima barang, bayar hutang, user, role, shift kasir, dst) - klik
+ *              berulang selagi request sebelumnya belum selesai diabaikan diam2.
+ *   [FEATURE]  Stock Opname berbasis SESI dgn KPI produktivitas: durasi hitung, total SKU,
+ *              total pcs fisik, % akurasi - per sesi, per petugas, per toko/gudang.
+ *              Timer berjalan otomatis, riwayat & drill-down detail per sesi.
+ *   [FEATURE]  Bulk Order - input/tempel sampai 100 order sekaligus (format CSV/tempel
+ *              dari Excel), pratinjau & validasi SKU di sisi klien sebelum kirim,
+ *              memakai endpoint sales.bulk-create (1 request utk semua order).
+ *   [FIX]      Daftar Penjualan: status bayar & status proses sekarang 2 kolom/filter/
+ *              aksi independen (SALES_PROCESS_STATUS vs SALES_PAYMENT_STATUS) - dulu
+ *              digabung 1 alur linear yg salah utk order COD (tombol "lanjut status"
+ *              otomatis menandai lunas walau order belum benar2 dibayar/dikirim COD).
+ *              Filter status utama di list sekarang murni status pembayaran (sesuai
+ *              permintaan), status proses jadi filter lanjutan terpisah.
+ *   [PERF]     Pagination asli (poin 7): daftar (produk/customer/supplier/sales/purchases/
+ *              expenses/dst) sekarang minta 25 baris per halaman + tombol Sebelumnya/
+ *              Berikutnya (backend crudList sudah mendukung page/limit dari awal, tinggal
+ *              dipakai) - bukan selalu limit:500 tiap pindah halaman. Kartu ringkasan yg
+ *              butuh agregat lintas-halaman (nilai stok, total omzet, dst) tetap akurat
+ *              lewat fetch agregat terpisah&ringan (lihat _statsItems), bukan dihitung dari
+ *              baris yg sedang ditampilkan.
+ *   [PERF]     10 entri PAGE_LOADERS yang TIDAK PERNAH dibaca (products/customers/
+ *              suppliers/roles/payments/accounts/employees/promotions/shipments/returns -
+ *              semuanya dirender lewat renderCRUD()/loadList() sendiri) dihapus - sebelumnya
+ *              hover/tap ke menu itu memicu fetch sia-sia sampai 500 baris yg tidak pernah
+ *              dipakai siapa pun.
  * ============================================================ */
 
 const DEFAULT_CONFIG = {
-  name:'ERP UMKM', logo:'E', color:'#6366f1', address:'', phone:'', email:'',
+  name:'ERP UMKM', logo:'E', color:'#3f6212', address:'', phone:'', email:'',
   currency:'IDR',
-  apiUrl:'https://script.google.com/macros/s/AKfycby9fcPY81URL7UDu6T5j7ImdWtK3NmXLKnSCfDBoycbnQJeKQKFX0VtAFmSfOtei_QJqQ/exec',
-  language:'id', version:'8.2',
+  apiUrl:'https://script.google.com/macros/s/AKfycbxZmg64LqQfLgJR-YKqNIFVWzf2n4JaoLTM9g0mSdXW3R6AzsLP6aG3z6cGWzXfPWkFvQ/exec',
+  language:'id', version:'9.0',
 };
 
 const MODULES_RBAC = [
-  { key:'dashboard',label:'Dashboard',icon:'fa-chart-pie',color:'#6366f1' },
+  { key:'dashboard',label:'Dashboard',icon:'fa-chart-pie',color:'#3f6212' },
   { key:'products',label:'Produk',icon:'fa-box',color:'#f59e0b' },
   { key:'inventory',label:'Inventory',icon:'fa-warehouse',color:'#f59e0b' },
   { key:'sales',label:'Penjualan',icon:'fa-cart-shopping',color:'#10b981' },
@@ -437,6 +498,35 @@ const isValidHex = v => /^#[0-9A-Fa-f]{6}$/.test(String(v || ''));
 const toNum = v => { const n = Number(v); return isNaN(n) ? 0 : n; };
 function debounce(fn, ms) { let tmr; return (...a) => { clearTimeout(tmr); tmr = setTimeout(() => fn(...a), ms); }; }
 
+// v9.0: withLock - pengaman anti double-click/anti-spam-klik UNIVERSAL utk semua tombol
+// submit. Bungkus fungsi submit dgn ini supaya, selama 1 pemanggilan BELUM selesai (baik
+// sukses maupun gagal/exception), pemanggilan berikutnya dgn key yg SAMA (klik ganda, spam
+// klik, atau double-tap mobile yg kadang mengirim 2 event click sebelum browser sempat
+// me-render ulang atribut `disabled` pada tombol) diabaikan diam2 - flag internal ini dicek
+// SINKRON sebelum baris kode async apa pun sempat jalan, jadi tidak bergantung pada timing
+// render browser sama sekali. Dipakai spt:
+//   async function _submitSaleImpl() { ...isi asli... }
+//   const submitSale = withLock('submitSale', _submitSaleImpl);
+// (nama fungsi PUBLIK yg dipanggil dari onclick="submitSale()" TIDAK berubah - jadi tidak
+// perlu mengubah satu pun pemanggilnya). key boleh STRING statis (form/modal tunggal spt
+// submitSale/submitPO/dst), ATAU FUNGSI (...args) => key, utk fungsi yg argumennya menyasar
+// entitas berbeda2 (mis. submitForm(mod,id) - submit form "customers" & "suppliers" adalah
+// 2 aksi independen, tidak boleh saling mengunci, tapi klik ganda pada form yg SAMA tetap
+// harus dicegah).
+const _LOCK_KEYS = new Set();
+function withLock(key, fn) {
+  return async function (...args) {
+    const k = typeof key === 'function' ? key(...args) : key;
+    if (_LOCK_KEYS.has(k)) return;
+    _LOCK_KEYS.add(k);
+    try {
+      return await fn.apply(this, args);
+    } finally {
+      _LOCK_KEYS.delete(k);
+    }
+  };
+}
+
 function fmtDate(d) {
   if (!d) return '-';
   try {
@@ -464,7 +554,7 @@ function showUndoToast(msg, undoFn) {
   const el = document.createElement('div');
   el.className = 'toast fixed bottom-4 right-4 z-[10000] px-4 py-3 rounded-lg shadow-lg text-sm text-white flex items-center gap-3';
   el.style.background = '#1e293b';
-  el.innerHTML = `<i class="fa-solid fa-trash"></i><span>${esc(msg)}</span><button class="ml-2 underline font-semibold" style="color:#818cf8">Undo</button>`;
+  el.innerHTML = `<i class="fa-solid fa-trash"></i><span>${esc(msg)}</span><button class="ml-2 underline font-semibold" style="color:var(--gold)">Undo</button>`;
   el.querySelector('button').onclick = async () => {
     el.remove();
     try { await undoFn(); toast('Dipulihkan'); }
@@ -576,12 +666,46 @@ function smartDefaults(action, payload) {
 // Action yang mengubah data (create/update/delete/dll) TIDAK PERNAH di-retry otomatis -
 // kalau responsnya yang hilang di tengah jalan (bukan request-nya), retry otomatis
 // bisa bikin transaksi kepencet dua kali walau user cuma diam menunggu.
+// P0 FIX: Apps Script membatasi eksekusi bersamaan per pengguna & melambatkan sisanya. Saat halaman
+// dibuka, prefetch (produk/pelanggan/penjualan) + dashboard + panggilan halaman berebut sekaligus
+// sehingga request penting ikut lambat/timeout. Antrean ini membatasi 4 request bersamaan, dan
+// prefetch (latar) maksimal 2 slot supaya request halaman yang sedang dibuka selalu dapat giliran.
+const NET = { max:4, maxBg:2, active:0, bgActive:0, fg:[], bg:[] };
+function netPump() {
+  while (NET.active < NET.max) {
+    let job = NET.fg.shift();
+    if (!job && NET.bgActive < NET.maxBg) job = NET.bg.shift();
+    if (!job) break;
+    NET.active++; if (job.bg) NET.bgActive++;
+    job.res();
+  }
+}
+function netAcquire(bg) { return new Promise(res => { (bg ? NET.bg : NET.fg).push({ res, bg }); netPump(); }); }
+function netRelease(bg) { NET.active--; if (bg) NET.bgActive--; netPump(); }
 function isRetryableAction(action) {
   if (action === 'ping' || action === 'setup.status' || action === 'setup.full-status' || action === 'auth.me') return true;
   if (action.startsWith('reports.')) return true;
   return /\.(list|get|stats|movements|low-stock|current|shift-current|shift-list|start|by-warehouse|status-counts)$/.test(action);
 }
+// P1 idempotency: aksi tulis penting diberi client_ref. Ref DIPERTAHANKAN selama percobaan gagal karena
+// jaringan/timeout (server mungkin sudah menyimpan), sehingga kirim ulang payload yang sama tidak membuat
+// transaksi ganda. Ref dibuang setelah sukses ATAU ditolak server, jadi transaksi identik berikutnya baru.
+const IDEM_ACTIONS = new Set(['sales.create', 'sales.bulk-create', 'purchases.create', 'purchases.pay', 'purchases.receive']);
+function _djb2(s) { let h = 5381; for (let i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) | 0; return (h >>> 0).toString(36); }
 async function api(action, payload = {}, opts = {}) {
+  if (IDEM_ACTIONS.has(action) && payload && !payload.client_ref) {
+    S.idemRefs = S.idemRefs || {};
+    const hk = action + ':' + _djb2(JSON.stringify(payload));
+    const ref = S.idemRefs[hk] || (S.idemRefs[hk] = (crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2)));
+    try { const r = await _apiRetry(action, { ...payload, client_ref: ref }, opts); delete S.idemRefs[hk]; return r; }
+    catch (err) {
+      if (!/Request dibatalkan|timeout|Koneksi gagal|JSON valid|Respons server kosong|HTTP 5\d\d/.test(err.message || '')) delete S.idemRefs[hk];
+      throw err;
+    }
+  }
+  return _apiRetry(action, payload, opts);
+}
+async function _apiRetry(action, payload = {}, opts = {}) {
   const maxRetries = opts.retries !== undefined ? opts.retries : (isRetryableAction(action) ? 2 : 0);
   let lastErr;
   for (let attempt = 0; attempt <= maxRetries; attempt++) {
@@ -589,7 +713,7 @@ async function api(action, payload = {}, opts = {}) {
       return await apiOnce(action, payload, opts);
     } catch (err) {
       lastErr = err;
-      const transient = /Request dibatalkan|Koneksi gagal|JSON valid|Respons server kosong|HTTP 5\d\d/.test(err.message || '');
+      const transient = /Request dibatalkan|timeout|Koneksi gagal|JSON valid|Respons server kosong|HTTP 5\d\d/.test(err.message || '');
       if (!transient || attempt === maxRetries) throw err;
       await slp(500 * (attempt + 1));
     }
@@ -601,19 +725,44 @@ async function apiOnce(action, payload = {}, opts = {}) {
   const key = action + ':' + JSON.stringify(payload);
   const now = Date.now(), ttl = opts.ttl || 30000;
   if (opts.cache !== false && S.cache[key] && (now - S.cacheTime[key]) < ttl) return S.cache[key];
+  // P0 FIX: sebelumnya abortKey = nama action, sehingga 2 pemanggil action yang SAMA (mis. prefetch
+  // menu + halaman Stok Opname sama-sama memanggil warehouses.list) saling membatalkan -> muncul
+  // "Request dibatalkan" / "Gagal memuat daftar gudang". Sekarang request identik yang sedang
+  // berjalan DIGABUNG (satu fetch, banyak penerima); pembatalan hanya jika pemanggil minta eksplisit
+  // lewat opts.abortKey (mis. pencarian ketik-cepat).
+  if (!opts.abortKey) {
+    S.inflight = S.inflight || {};
+    const fk = key + (S.prefetching ? '::prefetch' : '');
+    if (S.inflight[fk]) return S.inflight[fk];
+    const pr = _apiFetch(action, payload, opts, key, now);
+    S.inflight[fk] = pr;
+    const done = () => { if (S.inflight[fk] === pr) delete S.inflight[fk]; };
+    pr.then(done, done);
+    return pr;
+  }
+  return _apiFetch(action, payload, opts, key, now);
+}
+async function _apiFetch(action, payload, opts, key, now) {
+  const bg = !!S.prefetching;
+  await netAcquire(bg);
+  try { return await _apiFetchRaw(action, payload, opts, key, now); }
+  finally { netRelease(bg); }
+}
+async function _apiFetchRaw(action, payload, opts, key, now) {
   // FIX v8.6: prefetch (hover di menu) dan navigasi sungguhan bisa memanggil action yang SAMA
   // hampir bersamaan. Sebelumnya keduanya berbagi 1 abortKey, jadi yang datang belakangan akan
   // MEMBATALKAN yang duluan - kalau urutannya sial, request navigasi asli yang jadi korban dan
   // "Request dibatalkan" muncul di halaman padahal user tidak membatalkan apa pun. Sekarang
   // request hasil prefetch dipisah ke namespace sendiri supaya tidak pernah saling membatalkan
   // dengan request navigasi yang sebenarnya (lihat prefetchPage()).
-  const abortKey = (opts.abortKey || action) + (S.prefetching ? '::prefetch' : '');
-  if (S.aborts[abortKey]) { try { S.aborts[abortKey].abort(); } catch(_) {} }
+  const abortKey = opts.abortKey ? (opts.abortKey + (S.prefetching ? '::prefetch' : '')) : null;
+  if (abortKey && S.aborts[abortKey]) { try { S.aborts[abortKey].abort(); } catch(_) {} }
   const body = { action, ...payload };
   if (S.token) body.token = S.token;
   const ctl = new AbortController();
-  S.aborts[abortKey] = ctl;
-  const tid = setTimeout(() => ctl.abort(), opts.timeout || 30000);
+  if (abortKey) S.aborts[abortKey] = ctl;
+  let timedOut = false;
+  const tid = setTimeout(() => { timedOut = true; ctl.abort(); }, opts.timeout || 30000);
   const t0 = Date.now();
   try {
     const res = await fetch(S.config.apiUrl, {
@@ -622,7 +771,7 @@ async function apiOnce(action, payload = {}, opts = {}) {
       body: JSON.stringify(body), signal: ctl.signal, redirect:'follow'
     });
     clearTimeout(tid);
-    delete S.aborts[abortKey];
+    if (abortKey) delete S.aborts[abortKey];
     const ms = Date.now() - t0;
     S.metrics.calls++; S.metrics.totalMs += ms; S.metrics.lastMs = ms;
     setText('#footMs', ms + 'ms');
@@ -631,13 +780,19 @@ async function apiOnce(action, payload = {}, opts = {}) {
     let json;
     try { json = JSON.parse(text); }
     catch { throw new Error('Server tidak mengembalikan JSON valid.'); }
+    // P0: tampilkan versi kode server yang SEDANG melayani aplikasi (dari field `v` di tiap respons),
+    // supaya deployment lama / apiUrl yang salah langsung terlihat di footer.
+    if (json && json.v) { S.serverV = json.v; setText('#footMs', ms + 'ms · server v' + json.v); }
     if (!json.success) {
-      if (/token|unauthoriz|kadaluarsa|401|403/i.test(json.error || '')) {
+      if (/^\s*(token (wajib|tidak valid|kadaluarsa)|unauthorized)/i.test(json.error || '')) {
         if (S.token && window.location.hash !== '#expired') {
           S.cache = {}; S.cacheTime = {};
           toast('Sesi berakhir. Silakan login ulang.', 'error');
           setTimeout(() => { if (typeof doLogout === 'function') doLogout(); }, 1800);
         }
+      }
+      if (/^[a-z_]+\.[a-z_-]+ tidak dikenal$|^Action tidak dikenal/i.test(json.error || '')) {
+        throw new Error(json.error + ' — server v' + (json.v || '?') + ' tidak mengenal perintah ini. Kemungkinan Web App belum di-deploy dengan kode terbaru, atau apiUrl di Index.html mengarah ke deployment lain.');
       }
       throw new Error(json.error || 'Terjadi kesalahan pada server');
     }
@@ -651,7 +806,8 @@ async function apiOnce(action, payload = {}, opts = {}) {
     return json.data;
   } catch (err) {
     clearTimeout(tid);
-    if (err.name === 'AbortError') throw new Error('Request dibatalkan');
+    if (abortKey && S.aborts[abortKey] === ctl) delete S.aborts[abortKey];
+    if (err.name === 'AbortError') throw new Error(timedOut ? 'Server terlalu lama merespons (timeout). Coba lagi.' : 'Request dibatalkan');
     if (err.message.includes('Failed to fetch') || err.message.includes('NetworkError'))
       throw new Error('Koneksi gagal. Cek: (1) koneksi internet, (2) Web App di-deploy "Anyone", (3) URL berakhiran /exec');
     throw err;
@@ -670,18 +826,40 @@ const PAGE_LOADERS = {
   sales: async () => {
     const f = getFilterState('sales');
     const payload = buildListPayload('sales', f);
-    const [orders, shipments, counts] = await Promise.all([
-      api('sales.list', payload, { ttl: 20000 }),
-      api('shipments.list', { limit:500 }, { ttl:20000 }),
+    // v9.0 [poin 7]: pengiriman utk kolom "Pengiriman" sekarang ikut dilampirkan backend
+    // (with_shipments) HANYA utk order yg tampil di halaman ini - dulu halaman Penjualan
+    // menarik shipments.list limit:500 SETIAP dibuka.
+    const [orders, statusCounts, paymentCounts] = await Promise.all([
+      api('sales.list', { ...payload, with_shipments: true }, { ttl: 20000 }),
       api('sales.status-counts', { date_from:f.dateFrom||'', date_to:f.dateTo||'' }, { ttl:20000 }),
+      // v9.0: hitung per status_bayar terpisah (poin 6) - dipakai stat "Lunas/Belum
+      // Lunas" supaya akurat utk SELURUH data terfilter, bukan cuma baris di 1 halaman.
+      api('sales.status-counts', { date_from:f.dateFrom||'', date_to:f.dateTo||'', by:'status_bayar' }, { ttl:20000 }),
     ]);
-    return { ...orders, _shipments: shipments.items||[], _statusCounts: counts.counts||{} };
+    return { ...orders, _shipments: orders.shipments||[], _statusCounts: statusCounts.counts||{}, _paymentCounts: paymentCounts.counts||{} };
   },
-  purchases: async () => api('purchases.list', buildListPayload('purchases', getFilterState('purchases')), { ttl: 20000 }),
-  products: async () => api('products.list', { limit: 500, sort_by:'nama', sort_dir:'asc' }, { ttl: 30000 }),
-  customers: async () => api('customers.list', { limit: 500, sort_by:'nama', sort_dir:'asc' }, { ttl: 30000 }),
-  suppliers: async () => api('suppliers.list', { limit: 500 }, { ttl: 30000 }),
-  expenses: async () => api('expenses.list', buildListPayload('expenses', getFilterState('expenses')), { ttl: 20000 }),
+  purchases: async () => {
+    const f = getFilterState('purchases');
+    const payload = buildListPayload('purchases', f);
+    // v9.0 [poin 7]: kartu ringkasan (Nilai Total/Sudah Dibayar/Sisa Hutang/Diterima) perlu
+    // agregat SELURUH data terfilter, bukan cuma 1 halaman (25 baris) - diambil terpisah
+    // (limit lebih besar), TIDAK dirender jadi baris tabel. Payload identik antar-halaman
+    // (selalu page:1) jadi otomatis kena cache api() ~20s, tidak fetch ulang tiap ganti hal.
+    const [list, statsResp] = await Promise.all([
+      api('purchases.list', payload, { ttl: 20000 }),
+      api('purchases.list', { ...payload, limit:1000, page:1 }, { ttl: 20000 }),
+    ]);
+    return { ...list, _statsItems: statsResp.items || [] };
+  },
+  expenses: async () => {
+    const f = getFilterState('expenses');
+    const payload = buildListPayload('expenses', f);
+    const [list, statsResp] = await Promise.all([
+      api('expenses.list', payload, { ttl: 20000 }),
+      api('expenses.list', { ...payload, limit:1000, page:1 }, { ttl: 20000 }),
+    ]);
+    return { ...list, _statsItems: statsResp.items || [] };
+  },
   inventory: async () => {
     const f = getFilterState('inventory');
     const [mv, low] = await Promise.all([
@@ -691,15 +869,11 @@ const PAGE_LOADERS = {
     return { movements:mv, lowStock:low };
   },
   users: async () => api('users.list', {}, { ttl:15000 }),
-  roles: async () => api('roles.list', { limit:500 }, { ttl:60000 }),
   audit: async () => {
     const f = getFilterState('audit');
     return api('audit.list', { limit:200, modul:f.extra.modul||'', aksi:f.extra.aksi||'', date_from:f.dateFrom||'', date_to:f.dateTo||'' }, { ttl:10000 });
   },
   modules: async () => api('modules.list', {}, { cache:false }),
-  payments: async () => api('payments.list', { limit:500 }, { ttl:20000 }),
-  accounts: async () => api('accounts.list', { limit:500 }, { ttl:30000 }),
-  employees: async () => api('employees.list', { limit:500 }, { ttl:30000 }),
   attendance: async () => {
     const f = getFilterState('attendance');
     const [att, emp] = await Promise.all([
@@ -708,7 +882,6 @@ const PAGE_LOADERS = {
     ]);
     return { attendance:att, employees:emp };
   },
-  promotions: async () => api('promotions.list', { limit:500 }, { ttl:30000 }),
   bundles: async () => {
     const [b, p] = await Promise.all([
       api('product_bundles.list', { limit:200 }, { ttl:20000 }),
@@ -716,23 +889,68 @@ const PAGE_LOADERS = {
     ]);
     return { bundles:b, products:p };
   },
-  shipments: async () => api('shipments.list', { limit:500 }, { ttl:20000 }),
-  returns: async () => api('returns.list', { limit:500 }, { ttl:20000 }),
 };
+// FIX v9.0 [poin 7/8]: 10 entri PAGE_LOADERS berikut ini DIHAPUS krn sebelumnya TIDAK
+// PERNAH dibaca oleh siapa pun (products/customers/suppliers/roles/payments/accounts/
+// employees/promotions/shipments/returns semuanya dirender lewat renderCRUD()/loadList()
+// atau renderRoles(), yang mengambil data sendiri lewat buildListPayload - BUKAN lewat
+// getPageData()). Padahal karena entrinya ADA, prefetchPage() (dipicu hover/tap menu)
+// tetap menjalankannya dan fetch sampai 500 baris ke PAGE_CACHE yang lalu tidak pernah
+// dibaca siapa pun - fetch besar yang 100% sia-sia pada SETIAP hover ke 10 menu itu.
 
+// v9.0 [poin 7]: ukuran halaman default utk daftar/tabel - sebelumnya SEMUA page loader
+// selalu minta limit:500 (sampai 500 baris) setiap kali pindah halaman/navigasi, lalu
+// merender sampai 500 baris DOM sekaligus tanpa kontrol halaman sungguhan (cuma teks
+// "Menampilkan X dari Y"). Backend (crudList di Code.gs) sebenarnya SUDAH mendukung
+// page/limit sejak awal - sekarang benar2 dipakai dari sisi frontend lewat renderPager()/
+// goToPage() di bawah.
+const DEFAULT_PAGE_LIMIT = 25;
 function buildListPayload(mod, f) {
   const payload = {
-    limit: 500, q: f.search || '', status: f.status || '',
+    limit: DEFAULT_PAGE_LIMIT, page: f.page || 1, q: f.search || '', status: f.status || '',
     date_from: f.dateFrom || '', date_to: f.dateTo || '',
     sort_by: f.sortBy || '', sort_dir: f.sortDir || 'desc',
   };
   if (Object.keys(f.extra).length) payload.extra = JSON.stringify(f.extra);
-  // v8.2: sales dengan status dari flow → kirim sebagai extra.status_bayar
-  if (mod === 'sales' && f.status && SALES_FLOW_MAP[f.status]) {
+  // FIX v9.0 [poin 6]: filter status UTAMA di Daftar Penjualan sekarang murni STATUS
+  // PEMBAYARAN (lihat SALES_PAYMENT_STATUS) - dikirim sbg extra.status_bayar. Status
+  // PROSES (draft/dikirim/dst) difilter lewat filter lanjutan "Status Proses" terpisah
+  // (extraFields dgn key literal 'status', lihat renderSales) - sudah otomatis ikut ke
+  // extra{} di atas, dua dimensi independen, tidak lagi 1 daftar gabungan spt dulu.
+  if (mod === 'sales' && f.status) {
     payload.status = '';
     payload.extra = JSON.stringify({ ...(f.extra || {}), status_bayar: f.status });
   }
   return payload;
+}
+// Pager generik: baca page/limit/total dari respons backend (crudList sudah selalu
+// mengirim ini), tampilkan "Menampilkan X-Y dari Z" + tombol Sebelumnya/Berikutnya.
+// Kalau cuma 1 halaman, tampilkan ringkasan saja tanpa tombol (tidak ada gunanya).
+function renderPager(page, r) {
+  const f = getFilterState(page);
+  const total = r.total ?? (r.items || []).length;
+  const limit = r.limit || DEFAULT_PAGE_LIMIT;
+  const curPage = r.page || f.page || 1;
+  const totalPages = Math.max(1, Math.ceil(total / limit));
+  if (totalPages <= 1) {
+    return `<div class="text-xs text-muted mt-3">Menampilkan <b class="text-main">${(r.items||[]).length}</b> dari <b class="text-main">${total}</b> data</div>`;
+  }
+  const startN = total === 0 ? 0 : (curPage - 1) * limit + 1;
+  const endN = Math.min(curPage * limit, total);
+  return `<div class="flex items-center justify-between flex-wrap gap-2 mt-3">
+    <div class="text-xs text-muted">Menampilkan <b class="text-main">${startN}-${endN}</b> dari <b class="text-main">${total}</b> data</div>
+    <div class="flex items-center gap-1">
+      <button onclick="goToPage('${page}',${curPage - 1})" ${curPage <= 1 ? 'disabled' : ''} class="w-7 h-7 rounded-lg border disabled:opacity-30 flex items-center justify-center" style="border-color:var(--border)"><i class="fa-solid fa-chevron-left text-[10px]"></i></button>
+      <span class="px-2 text-xs text-muted">Hal <b class="text-main">${curPage}</b> / ${totalPages}</span>
+      <button onclick="goToPage('${page}',${curPage + 1})" ${curPage >= totalPages ? 'disabled' : ''} class="w-7 h-7 rounded-lg border disabled:opacity-30 flex items-center justify-center" style="border-color:var(--border)"><i class="fa-solid fa-chevron-right text-[10px]"></i></button>
+    </div>
+  </div>`;
+}
+function goToPage(page, n) {
+  if (n < 1) return;
+  getFilterState(page).page = n;
+  invalidatePage(page);
+  refreshCurrentPage();
 }
 
 function prefetchPage(page, force) {
@@ -743,10 +961,20 @@ function prefetchPage(page, force) {
   S.prefetching = true;
   let p;
   try { p = PAGE_LOADERS[page](); } finally { S.prefetching = false; }
-  PAGE_INFLIGHT[page] = p
+  // FIX v9.0 [CRITICAL]: sebelumnya .catch() di sini MENELAN error (tidak throw ulang),
+  // jadi kalau prefetch (dipicu hover/touchstart pada menu) gagal SAAT bersamaan dengan
+  // getPageData() ikut memakai promise yang sama (lihat di bawah), pemanggilnya menerima
+  // `undefined` alih-alih error - lalu kode seperti `data.movements.items` meledak dengan
+  // "Cannot read properties of undefined". Sekarang promise yang DISIMPAN di PAGE_INFLIGHT
+  // tetap REJECT selayaknya (supaya getPageData() bisa menangkapnya dgn benar), dan
+  // "unhandled rejection" utk jalur prefetch-murni (tidak ada yang menunggu) dicegah lewat
+  // cabang catch TERPISAH yang tidak menimpa nilai yang disimpan.
+  const inflight = p
     .then(data => { PAGE_CACHE[page] = { data, ts:Date.now() }; delete PAGE_INFLIGHT[page]; return data; })
-    .catch(() => { delete PAGE_INFLIGHT[page]; /* prefetch cuma best-effort - gagal/dibatalkan itu wajar, jangan biarkan jadi unhandled rejection */ });
-  return PAGE_INFLIGHT[page];
+    .catch(err => { delete PAGE_INFLIGHT[page]; throw err; });
+  PAGE_INFLIGHT[page] = inflight;
+  inflight.catch(() => {}); // best-effort: cegah "Uncaught (in promise)" di console kalau tidak ada yg await ini
+  return inflight;
 }
 
 async function getPageData(page, force) {
@@ -851,7 +1079,9 @@ function invalidateRolesCache() {
 /* ---------- Filters ---------- */
 function getFilterState(page) {
   if (!FILTER_STATE[page]) {
-    FILTER_STATE[page] = { dateFrom:'', dateTo:'', datePreset:'all', status:'', search:'', sortBy:'', sortDir:'desc', extra:{} };
+    // v9.0 [poin 7]: tambah `page` (halaman saat ini) - dipakai pagination asli, supaya
+    // pindah halaman TIDAK selalu fetch limit:500 (lihat DEFAULT_PAGE_LIMIT/renderPager).
+    FILTER_STATE[page] = { dateFrom:'', dateTo:'', datePreset:'all', status:'', search:'', sortBy:'', sortDir:'desc', extra:{}, page:1 };
   }
   return FILTER_STATE[page];
 }
@@ -872,6 +1102,7 @@ function setSort(page, col) {
   const f = getFilterState(page);
   if (f.sortBy === col) f.sortDir = f.sortDir === 'asc' ? 'desc' : 'asc';
   else { f.sortBy = col; f.sortDir = 'desc'; }
+  f.page = 1; // v9.0 [poin 7]: ganti urutan → mulai lagi dari halaman 1
   invalidatePage(page);
   refreshCurrentPage();
 }
@@ -903,7 +1134,7 @@ function countActiveFilters(page) {
   let n = 0;
   if (f.dateFrom || f.dateTo) n++;
   if (f.status) n++;
-  if (f.extra) n += Object.values(f.extra).filter(v => v).length;
+  if (f.extra) n += Object.values(f.extra).filter(v => Array.isArray(v) ? v.length : v).length;
   return n;
 }
 
@@ -917,7 +1148,7 @@ function renderFilterBar(page, opts = {}) {
         <i class="fa-solid fa-sliders"></i><span>Filter</span>
         <span class="filter-btn-badge" id="filterBadge-${page}" style="${activeCount > 0 ? '' : 'display:none'}">${activeCount || 0}</span>
       </button>
-      <input class="filter-input" placeholder="🔍 Cari…" value="${esc(f.search)}" id="filterSearch-${page}" oninput="onFilterSearchInput('${page}', this.value)">
+      ${opts.noSearch ? '' : `<input class="filter-input" placeholder="🔍 Cari…" value="${esc(f.search)}" id="filterSearch-${page}" oninput="onFilterSearchInput('${page}', this.value)">`}
       <button class="filter-chip" onclick="resetFilters('${page}');invalidatePage('${page}');refreshCurrentPage()" title="Reset">
         <i class="fa-solid fa-xmark"></i>
       </button>
@@ -927,7 +1158,9 @@ function renderFilterBar(page, opts = {}) {
 }
 
 function onFilterSearchInput(page, value) {
-  getFilterState(page).search = value;
+  const f = getFilterState(page);
+  f.search = value;
+  f.page = 1; // v9.0 [poin 7]: cari ulang → mulai lagi dari halaman 1
   invalidatePage(page);
   const fn = window['debReload_' + page];
   if (fn) fn();
@@ -982,10 +1215,12 @@ function renderFilterDrawerBody(page, opts) {
         <div><div class="text-[10px] text-muted mb-1">Sampai</div><input type="date" class="filter-date-input" value="${esc(f.dateTo)}" onchange="getFilterState('${page}').dateTo=this.value;getFilterState('${page}').datePreset='custom'"></div>
       </div></div>`;
   if (statuses.length) {
-    html += `<div><div class="filter-section-title"><i class="fa-solid fa-circle-dot mr-1"></i>Status</div>
+    const statusTitle = opts.statusLabel || 'Status';
+    const statusLabels = opts.statusLabels || {};
+    html += `<div><div class="filter-section-title"><i class="fa-solid fa-circle-dot mr-1"></i>${esc(statusTitle)}</div>
         <div class="space-y-1">
-          <div class="filter-option ${!f.status ? 'active' : ''}" onclick="getFilterState('${page}').status='';renderFilterDrawerBody('${page}', window['_filterOpts_${page}'] || {})"><span class="flex-1">Semua Status</span>${!f.status ? '<i class="fa-solid fa-check text-[10px]"></i>' : ''}</div>
-          ${statuses.map(s => `<div class="filter-option ${f.status === s ? 'active' : ''}" onclick="getFilterState('${page}').status='${esc(s)}';renderFilterDrawerBody('${page}', window['_filterOpts_${page}'] || {})"><span class="flex-1 capitalize">${esc(s)}</span>${f.status === s ? '<i class="fa-solid fa-check text-[10px]"></i>' : ''}</div>`).join('')}
+          <div class="filter-option ${!f.status ? 'active' : ''}" onclick="getFilterState('${page}').status='';renderFilterDrawerBody('${page}', window['_filterOpts_${page}'] || {})"><span class="flex-1">Semua ${esc(statusTitle)}</span>${!f.status ? '<i class="fa-solid fa-check text-[10px]"></i>' : ''}</div>
+          ${statuses.map(s => `<div class="filter-option ${f.status === s ? 'active' : ''}" onclick="getFilterState('${page}').status='${esc(s)}';renderFilterDrawerBody('${page}', window['_filterOpts_${page}'] || {})"><span class="flex-1 capitalize">${esc(statusLabels[s] || s)}</span>${f.status === s ? '<i class="fa-solid fa-check text-[10px]"></i>' : ''}</div>`).join('')}
         </div></div>`;
   }
   if (extraFields.length) {
@@ -993,8 +1228,14 @@ function renderFilterDrawerBody(page, opts) {
         <div class="space-y-3">${extraFields.map(ef => {
           const val = f.extra[ef.key] || '';
           return `<div><div class="text-[10px] font-semibold text-soft uppercase tracking-wide mb-1">${esc(ef.label)}</div>
-              ${ef.type === 'select'
-                ? `<select class="filter-date-input filter-select" onchange="getFilterState('${page}').extra['${ef.key}']=this.value"><option value="">Semua</option>${(ef.options||[]).map(o => `<option value="${esc(o)}" ${val === o ? 'selected' : ''}>${esc(o)}</option>`).join('')}</select>`
+              ${ef.type === 'multiselect'
+                ? `<div class="flex flex-wrap gap-1.5">${(ef.options || []).map(o => { const ov = String(o.value); const on = Array.isArray(val) && val.map(String).includes(ov); return `<button type="button" class="filter-chip ${on ? 'active' : ''}" onclick="toggleFilterMulti('${page}','${ef.key}','${esc(ov)}')">${esc(o.label)}</button>`; }).join('') || '<span class="text-xs text-muted">Tidak ada data</span>'}</div>`
+                : ef.type === 'select'
+                ? `<select class="filter-date-input filter-select" onchange="getFilterState('${page}').extra['${ef.key}']=this.value"><option value="">Semua</option>${(ef.options||[]).map(o => {
+                    const ov = (o && typeof o === 'object') ? o.value : o;
+                    const ol = (o && typeof o === 'object') ? o.label : o;
+                    return `<option value="${esc(ov)}" ${val === ov ? 'selected' : ''}>${esc(ol)}</option>`;
+                  }).join('')}</select>`
                 : `<input class="filter-date-input" placeholder="${esc(ef.ph||'')}" value="${esc(val)}" oninput="getFilterState('${page}').extra['${ef.key}']=this.value">`}
             </div>`;
         }).join('')}</div></div>`;
@@ -1002,10 +1243,18 @@ function renderFilterDrawerBody(page, opts) {
   html += `<div class="rounded-lg p-3 text-xs" style="background:var(--bg-soft)"><div class="text-muted mb-1">Filter saat ini:</div><div class="text-main font-medium">${countActiveFilters(page)} filter aktif</div></div>`;
   setHtml('#filterDrawerBody', html);
 }
-function applyFiltersFromDrawer() { 
+function toggleFilterMulti(page, key, val) {
+  const f = getFilterState(page);
+  const cur = Array.isArray(f.extra[key]) ? f.extra[key].slice() : [];
+  const i = cur.indexOf(val);
+  if (i >= 0) cur.splice(i, 1); else cur.push(val);
+  f.extra[key] = cur;
+  renderFilterDrawerBody(page, window['_filterOpts_' + page] || {});
+}
+function applyFiltersFromDrawer() {
   const page = _filterDrawerCtx.page;
-  if (page) invalidatePage(page);
-  closeFilterDrawer(); refreshCurrentPage(); 
+  if (page) { getFilterState(page).page = 1; invalidatePage(page); } // v9.0 [poin 7]: filter berubah → mulai lagi dari halaman 1
+  closeFilterDrawer(); refreshCurrentPage();
 }
 function resetFiltersFromDrawer() {
   const page = _filterDrawerCtx.page; if (!page) return;
@@ -1020,14 +1269,23 @@ function refreshCurrentPage() {
   else if (p === 'inventory') renderInventory(true);
   else if (p === 'audit') renderAudit(true);
   else if (p === 'users') renderUsers(true);
+  else if (p === 'stockopname') refreshOpnameView();
   else if (CRUD[p]) renderCRUD(p, true);
 }
 
 /* ---------- Sales Flow ---------- */
-const SALES_FLOW = [
+// FIX v9.0 [poin 6]: SALES_FLOW lama menggabungkan status PROSES (draft/pending/
+// processing/picking/packing/shipped/delivered/completed) DAN status PEMBAYARAN
+// ('paid') jadi SATU alur linear, dan tombol "lanjut status" otomatis menandai lunas
+// begitu order mencapai 'delivered'/'completed'. Ini salah utk order COD (Cash On
+// Delivery) - uangnya baru diterima kurir SAAT/SETELAH barang sampai, bukan sebelum
+// dikirim, dan belum tentu berhasil tertagih. Sekarang dipisah jadi 2 dimensi yang
+// independen - proses boleh maju tanpa mengubah status bayar sama sekali, dan lunas/
+// belum-lunas ditandai lewat aksi terpisah (mengikuti backend: sales.mark-paid /
+// sales.mark-unpaid, lihat _salesSetPaymentStatus di Code.gs).
+const SALES_PROCESS_STATUS = [
   { key:'draft',      label:'Draft',    icon:'fa-file-pen',     color:'#94a3b8' },
   { key:'pending',    label:'Pending',  icon:'fa-clock',        color:'#f59e0b' },
-  { key:'paid',       label:'Dibayar',  icon:'fa-money-check',  color:'#10b981' },
   { key:'processing', label:'Diproses', icon:'fa-gears',        color:'#3b82f6' },
   { key:'picking',    label:'Picking',  icon:'fa-hand',         color:'#8b5cf6' },
   { key:'packing',    label:'Packing',  icon:'fa-box',          color:'#8b5cf6' },
@@ -1035,34 +1293,78 @@ const SALES_FLOW = [
   { key:'delivered',  label:'Diterima', icon:'fa-box-open',     color:'#10b981' },
   { key:'completed',  label:'Selesai',  icon:'fa-circle-check', color:'#10b981' },
 ];
-const SALES_FLOW_MAP = {};
-SALES_FLOW.forEach((s, i) => SALES_FLOW_MAP[s.key] = { ...s, index:i });
+const SALES_PROCESS_STATUS_MAP = {};
+SALES_PROCESS_STATUS.forEach((s, i) => SALES_PROCESS_STATUS_MAP[s.key] = { ...s, index:i });
 
-function renderSalesFlowBadge(status) {
-  const s = SALES_FLOW_MAP[status] || SALES_FLOW_MAP.pending;
-  return `<span class="flow-badge" style="background:${hexA(s.color,.15)};color:${s.color}"><span class="flow-step-dot" style="background:${s.color}"></span>${esc(s.label)}</span>`;
+const SALES_PAYMENT_STATUS = [
+  { key:'pending',   label:'Belum Bayar', icon:'fa-clock' },
+  { key:'partial',   label:'Sebagian',    icon:'fa-hourglass-half' },
+  { key:'paid',      label:'Lunas',       icon:'fa-circle-check' },
+  { key:'cancelled', label:'Dibatalkan',  icon:'fa-ban' },
+  { key:'refund',    label:'Refund',      icon:'fa-rotate-left' },
+];
+const SALES_PAYMENT_STATUS_MAP = {};
+SALES_PAYMENT_STATUS.forEach(s => SALES_PAYMENT_STATUS_MAP[s.key] = s);
+const SALES_PAYMENT_LABELS = {}; SALES_PAYMENT_STATUS.forEach(s => SALES_PAYMENT_LABELS[s.key] = s.label);
+
+function renderSalesPaymentBadge(statusBayar) {
+  const key = statusBayar || 'pending';
+  const s = SALES_PAYMENT_STATUS_MAP[key] || { label: key, icon:'fa-circle-question' };
+  return `<span class="status-badge status-${esc(key)}"><i class="fa-solid ${s.icon} mr-1" style="font-size:9px"></i>${esc(s.label)}</span>`;
 }
-function renderSalesFlowStepper(currentStatus) {
-  const idx = (SALES_FLOW_MAP[currentStatus] || SALES_FLOW_MAP.pending).index;
-  return `<div class="sales-flow-timeline">${SALES_FLOW.map((s, i) => {
+function renderSalesProcessBadge(status) {
+  const key = status || 'draft';
+  const s = SALES_PROCESS_STATUS_MAP[key];
+  if (s) return `<span class="status-badge status-${esc(key)}">${esc(s.label)}</span>`;
+  if (key === 'cancelled') return `<span class="status-badge status-cancelled">Dibatalkan</span>`;
+  if (key === 'refund') return `<span class="status-badge status-refund">Refund</span>`;
+  return `<span class="status-badge status-${esc(key)}">${esc(key)}</span>`;
+}
+function renderSalesProcessStepper(currentStatus) {
+  const idx = (SALES_PROCESS_STATUS_MAP[currentStatus] || SALES_PROCESS_STATUS_MAP.pending).index;
+  return `<div class="sales-flow-timeline">${SALES_PROCESS_STATUS.map((s, i) => {
       const cls = i < idx ? 'done' : i === idx ? 'active' : '';
-      return `<span class="step ${cls}" title="${s.label}"><i class="fa-solid ${s.icon} mr-1"></i>${s.label}</span>${i < SALES_FLOW.length-1 ? '<i class="fa-solid fa-chevron-right arrow"></i>' : ''}`;
+      return `<span class="step ${cls}" title="${s.label}"><i class="fa-solid ${s.icon} mr-1"></i>${s.label}</span>${i < SALES_PROCESS_STATUS.length-1 ? '<i class="fa-solid fa-chevron-right arrow"></i>' : ''}`;
     }).join('')}</div>`;
 }
+// Tombol "lanjut" HANYA memajukan status PROSES - tidak lagi ikut menyentuh status
+// pembayaran sama sekali (lihat _salesChangeStatus di Code.gs).
 function getNextStatusButton(o) {
-  const cur = o.status_bayar || o.status;
-  const idx = (SALES_FLOW_MAP[cur] || {index:-1}).index;
-  if (idx < 0 || idx >= SALES_FLOW.length - 1) return '';
-  const next = SALES_FLOW[idx + 1];
-  return `<button onclick="quickChangeSalesStatus('${o.id}','${next.key}','${esc(next.label)}')" class="w-7 h-7 rounded hover:text-white" style="color:${next.color}" title="Lanjut: ${next.label}"><i class="fa-solid ${next.icon} text-xs"></i></button>`;
+  if (o.status === 'cancelled' || o.status === 'refund') return '';
+  const idx = (SALES_PROCESS_STATUS_MAP[o.status] || {index:-1}).index;
+  if (idx < 0 || idx >= SALES_PROCESS_STATUS.length - 1) return '';
+  const next = SALES_PROCESS_STATUS[idx + 1];
+  return `<button onclick="quickChangeSalesStatus('${o.id}','${next.key}','${esc(next.label)}')" class="w-7 h-7 rounded hover:text-white" style="color:${next.color}" title="Lanjut proses: ${next.label}"><i class="fa-solid ${next.icon} text-xs"></i></button>`;
 }
 async function quickChangeSalesStatus(id, newStatus, label) {
-  if (!confirm(`Ubah status ke "${label || newStatus}"?`)) return;
+  if (!confirm(`Ubah status proses ke "${label || newStatus}"?`)) return;
   try {
     await api('sales.update-status', { id, status:newStatus }, { cache:false });
-    toast(`Status → ${label || newStatus}`);
+    toast(`Status proses → ${label || newStatus}`);
+
     invalidateCache('sales'); invalidatePage('sales'); invalidatePage('dashboard');
     renderSales(true);
+  } catch (e) { toast(e.message, 'error'); }
+}
+// Tombol tandai lunas/belum-bayar - AKSI TERPISAH dari tombol lanjut-proses di atas.
+// Inilah cara yang benar utk order COD: proses boleh sudah 'Dikirim'/'Diterima' sambil
+// status bayar masih 'Belum Bayar', sampai kurir/kasir mengonfirmasi uang diterima lalu
+// menekan tombol ini.
+function getPaymentToggleButton(o) {
+  if (o.status === 'cancelled' || o.status === 'refund') return '';
+  if (o.status_bayar === 'paid') {
+    return `<button onclick="quickTogglePayment('${o.id}','pending')" class="w-7 h-7 rounded hover:text-white" style="color:#f59e0b" title="Tandai Belum Bayar"><i class="fa-solid fa-rotate-left text-xs"></i></button>`;
+  }
+  return `<button onclick="quickTogglePayment('${o.id}','paid')" class="w-7 h-7 rounded hover:text-white" style="color:#10b981" title="Tandai Lunas"><i class="fa-solid fa-money-check-dollar text-xs"></i></button>`;
+}
+async function quickTogglePayment(id, target) {
+  const label = target === 'paid' ? 'Lunas' : 'Belum Bayar';
+  if (!confirm(`Tandai transaksi ini sebagai "${label}"?`)) return;
+  try {
+    await api(target === 'paid' ? 'sales.mark-paid' : 'sales.mark-unpaid', { id }, { cache:false });
+    toast(`Ditandai ${label}`);
+    invalidateCache('sales'); invalidatePage('sales'); invalidatePage('dashboard');
+    refreshCurrentPage();
   } catch (e) { toast(e.message, 'error'); }
 }
 
@@ -1116,74 +1418,98 @@ function renderBootSteps() {
 }
 
 async function boot() {
-  loadConfig(); applyBranding(); applyTheme(); renderBootSteps();
   try {
-    bootStep(1, 'active');
-    const ping = await api('ping', {}, { cache:false, timeout: 25000 });
-    bootStep(1, 'done', `Server OK (v${ping.v || '?'})`);
-    setBootProgress(25); await slp(200);
+    loadConfig(); applyBranding(); applyTheme();
 
-    bootStep(2, 'active');
-    // v8.2: setup.status sekarang return minimal (tanpa url/id)
-    const status = await api('setup.status', {}, { cache:false });
-    if (!status.seeded) {
-      bootStep(2, 'active', 'Inisialisasi database…');
-      await api('setup.init', {}, { cache:false, timeout: 45000 });
-      bootStep(2, 'done', 'Database dibuat');
-    } else {
-      bootStep(2, 'done', `${status.total_sheets_expected || '?'} sheet siap`);
-    }
-    setBootProgress(55); await slp(200);
-
-    bootStep(3, 'active');
-    // v8.2: companies.list hanya bisa diakses setelah login (private endpoint)
-    // Skip di sini, akan di-fetch setelah login jika perlu
-    bootStep(3, 'done', 'Konfigurasi siap');
-    setBootProgress(80); await slp(200);
-
-    bootStep(4, 'active');
     const savedToken = sessionStorage.getItem('erp_token') || localStorage.getItem('erp_token');
-    const savedUser = sessionStorage.getItem('erp_user') || localStorage.getItem('erp_user');
+    const savedUser  = sessionStorage.getItem('erp_user')  || localStorage.getItem('erp_user');
+
     if (savedToken && savedUser) {
+      // Ada sesi tersimpan - coba auto-login LANGSUNG (1 panggilan auth.me), tanpa didahului
+      // ping/setup.status seperti sebelumnya (itu sekarang dicek terpisah di background lewat
+      // _backgroundBootChecks, supaya tidak menambah round-trip di jalur auto-login ini).
       try {
         S.token = savedToken; S.user = JSON.parse(savedUser);
-        await api('auth.me', {}, { cache:false });
-        bootStep(4, 'done', `Halo, ${S.user.nama}`);
-        setBootProgress(100); await slp(300);
-        finishBoot(true); return;
+        await api('auth.me', {}, { cache:false, timeout: 15000 });
+        finishBoot(true);
+        return;
       } catch (e) {
         S.token = ''; S.user = null;
         sessionStorage.removeItem('erp_token'); sessionStorage.removeItem('erp_user');
         localStorage.removeItem('erp_token'); localStorage.removeItem('erp_user');
       }
     }
-    let needWizard = false;
-    if (!status.seeded) needWizard = true;
-    else if (status.needs_bootstrap) needWizard = true;
-    else {
-      // v8.2: hanya cek users via endpoint private jika mungkin, skip jika tidak
-      needWizard = false;
-    }
-    bootStep(4, 'done', 'Siap');
-    setBootProgress(100); await slp(300);
+
+    // FIX v9.0 [CRITICAL, target: boot screen hilang → login muncul < 300ms]: sebelumnya
+    // baris finishBoot(false)/showLogin() di bawah ini baru tercapai SETELAH 2-3 panggilan
+    // API berurutan (ping, setup.status, kadang setup.init) DITAMBAH beberapa slp(200-300ms)
+    // - di koneksi lambat/cold-start Apps Script (nyatanya bisa >10 detik) user menatap boot
+    // screen kosong lama sekali, padahal FORM LOGIN itu sendiri statis & tidak butuh data
+    // apa pun dari server utk bisa digambar. Sekarang form login ditampilkan SEGERA (murni
+    // sinkron, tidak menunggu network sama sekali), dan ping/status server/kemungkinan
+    // wizard-setup dicek di BACKGROUND (_backgroundBootChecks) tanpa memblokir tampilan ini.
     finishBoot(false);
-    needWizard ? showWizard() : showLogin();
+    showLogin();
+    _backgroundBootChecks();
   } catch (err) {
+    // Pengaman: bagian di atas SEHARUSNYA murni sinkron (localStorage + DOM) jadi hampir
+    // tidak pernah melempar, tapi kalau toh terjadi (mis. localStorage korup), jangan biarkan
+    // user menatap boot screen kosong yg macet selamanya - tetap coba tampilkan login, dan
+    // tunjukkan pesan errornya di panel bootError kalau login pun gagal ditampilkan.
     console.error('[Boot]', err);
-    const cur = document.querySelector('[data-boot].active');
-    const n = cur?.getAttribute('data-boot');
-    if (n) bootStep(n, 'error');
-    $('#bootError')?.classList.remove('hidden');
-    setText('#bootErrorMsg', err.message);
+    try { finishBoot(false); showLogin(); }
+    catch (e2) {
+      $('#bootError')?.classList.remove('hidden');
+      setText('#bootErrorMsg', err.message || String(err));
+    }
   }
 }
+
+// Cek status server/setup TANPA memblokir tampilan login (dipanggil stlh login sudah
+// tampil). Satu2nya skenario yang memang butuh kerja beberapa detik adalah instalasi
+// BENAR² baru (sheet belum pernah dibuat sama sekali) - kalau itu terjadi, checklist
+// boot ditampilkan lagi sebentar supaya user tahu sistem sedang menyiapkan diri (bukan
+// macet), baru dipindah ke wizard. Utk kasus normal (sudah pernah di-setup, yang jauh
+// lebih sering terjadi), fungsi ini tidak mengubah tampilan apa pun - user sudah keburu
+// melihat & bisa mulai mengisi form login sejak awal.
+async function _backgroundBootChecks() {
+  try {
+    const status = await api('setup.status', {}, { cache:false, timeout: 20000 });
+    if (!status.seeded) {
+      $('#loginScreen')?.classList.add('hidden');
+      const bs = $('#bootScreen');
+      if (bs) { bs.style.transition = 'none'; bs.style.opacity = '1'; bs.style.display = 'flex'; }
+      renderBootSteps();
+      bootStep(1, 'done', 'Server OK'); setBootProgress(35);
+      bootStep(2, 'active', 'Inisialisasi database…');
+      await api('setup.init', {}, { cache:false, timeout: 45000 });
+      bootStep(2, 'done', 'Database dibuat'); setBootProgress(90);
+      bootStep(3, 'done', 'Konfigurasi siap'); bootStep(4, 'done', 'Siap'); setBootProgress(100);
+      await slp(250);
+      finishBoot(false);
+      showWizard();
+      return;
+    }
+    if (status.needs_bootstrap) {
+      $('#loginScreen')?.classList.add('hidden');
+      showWizard();
+    }
+  } catch (e) {
+    console.error('[Boot background]', e);
+    // Server bermasalah - biarkan form login tetap tampil apa adanya; checkApiHealth()
+    // (dipanggil dari showLogin()) sudah menunjukkan status "Server offline" ke user.
+  }
+}
+
 function finishBoot(loggedIn) {
   const boot = $('#bootScreen');
-  if (boot) { boot.style.opacity = '0'; boot.style.transition = 'opacity .4s'; }
+  // FIX v9.0: transisi dipersingkat (400ms -> 150ms) supaya total waktu boot-screen-hilang
+  // ikut masuk target < 300ms, bukan hanya bagian "tidak menunggu network"-nya saja.
+  if (boot) { boot.style.transition = 'opacity .15s'; boot.style.opacity = '0'; }
   setTimeout(() => {
     if (boot) boot.style.display = 'none';
     if (loggedIn) enterApp();
-  }, 400);
+  }, 150);
 }
 
 /* ---------- Wizard ---------- */
@@ -1198,7 +1524,7 @@ function wizardNext() {
     wizData.business = {
       name, type: $('#wizBusinessType')?.value || 'retail',
       phone: ($('#wizPhone')?.value || '').trim(), city: ($('#wizCity')?.value || '').trim(),
-      color: $('#wizColor')?.value || '#6366f1',
+      color: $('#wizColor')?.value || '#3f6212',
       logo: ($('#wizLogo')?.value || '').trim() || name.charAt(0).toUpperCase(),
     };
     wizStep = 2; updateWizardUI();
@@ -1258,8 +1584,9 @@ function updateWizardUI() {
     setHtml('#wizSummary', `<div><b>Bisnis:</b> ${esc(wizData.business.name)}</div><div><b>Jenis:</b> ${esc(wizData.business.type)}</div><div><b>Admin:</b> ${esc(wizData.admin.name)} (@${esc(wizData.admin.username)})</div><div><b>Role:</b> Owner (akses penuh)</div>`);
   }
 }
-async function submitWizard() {
+async function _submitWizardImpl() {
   const btn = $('#wizNext');
+  if (btn && btn.disabled) return;
   if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-circle-notch spin mr-1"></i> Menyimpan…'; }
   try {
     const authResult = await api('auth.register', {
@@ -1290,6 +1617,7 @@ async function submitWizard() {
     if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-check mr-1"></i> Selesaikan Setup'; }
   }
 }
+const submitWizard = withLock('submitWizard', _submitWizardImpl);
 
 /* ---------- Login ---------- */
 function showLogin() {
@@ -1424,21 +1752,50 @@ function startNotificationPolling() {
 function setupTooltips() {
   if (window._tooltipBound) return; window._tooltipBound = true;
   document.addEventListener('mouseover', e => {
+    // P0 FIX: tooltip "nyangkut" - elemen (mis. item sidebar) di-render ulang saat di-hover sehingga
+    // mouseout tidak pernah terpicu dan tooltip tertinggal di layar. Buang tooltip yatim dulu.
+    document.querySelectorAll('.__tip').forEach(t => { if (!t._owner || !t._owner.isConnected) t.remove(); });
     const el = e.target.closest('[data-tip]');
     if (!el || el._tip) return;
-    el._tip = document.createElement('div');
-    el._tip.className = 'fixed z-[9999] px-2 py-1 rounded text-[10px] pointer-events-none fade-in';
-    el._tip.style.background = 'var(--text)'; el._tip.style.color = 'var(--bg-card)';
-    el._tip.textContent = el.dataset.tip;
-    document.body.appendChild(el._tip);
+    const tip = document.createElement('div');
+    // Tip pendek (1 kata/frasa, seperti "Refresh"/"Hapus") tetap mungil;
+    // tip panjang (deskripsi modul) boleh wrap sampai beberapa baris.
+    const long = el.dataset.tip.length > 28;
+    tip.className = '__tip fixed z-[9999] px-2.5 py-1.5 rounded-lg text-[11px] leading-snug pointer-events-none fade-in shadow-lg';
+    tip.style.background = 'var(--text)'; tip.style.color = 'var(--bg-card)';
+    if (long) { tip.style.maxWidth = '230px'; tip.style.whiteSpace = 'normal'; }
+    else { tip.style.whiteSpace = 'nowrap'; }
+    tip.textContent = el.dataset.tip;
+    document.body.appendChild(tip);
+    el._tip = tip; tip._owner = el;
     const r = el.getBoundingClientRect();
-    el._tip.style.left = (r.left + r.width/2 - el._tip.offsetWidth/2) + 'px';
-    el._tip.style.top = (r.top - el._tip.offsetHeight - 6) + 'px';
+    const vw = window.innerWidth, vh = window.innerHeight;
+    const isNavEl = el.classList.contains('nav-item') || el.classList.contains('nav-parent');
+    let left, top;
+    if (isNavEl) {
+      // Item navigasi ada di tepi kiri (sidebar) → tampilkan tip di sebelah
+      // KANAN elemen supaya tidak terpotong, dengan fallback ke kiri bila
+      // sidebar sedang lebar penuh dan tidak ada ruang di kanan.
+      left = r.right + 10;
+      top = r.top + (r.height / 2) - (tip.offsetHeight / 2);
+      if (left + tip.offsetWidth > vw - 8) left = r.left - tip.offsetWidth - 10;
+    } else {
+      left = r.left + r.width / 2 - tip.offsetWidth / 2;
+      top = r.top - tip.offsetHeight - 6;
+      if (top < 6) top = r.bottom + 6; // tidak cukup ruang di atas → tampilkan di bawah
+    }
+    // Clamp supaya tooltip tidak pernah terpotong di luar viewport.
+    left = Math.max(6, Math.min(left, vw - tip.offsetWidth - 6));
+    top = Math.max(6, Math.min(top, vh - tip.offsetHeight - 6));
+    tip.style.left = left + 'px';
+    tip.style.top = top + 'px';
   });
   document.addEventListener('mouseout', e => {
     const el = e.target.closest('[data-tip]');
     if (el?._tip) { el._tip.remove(); delete el._tip; }
   });
+  const clearTips = () => document.querySelectorAll('.__tip').forEach(t => { if (t._owner) delete t._owner._tip; t.remove(); });
+  ['pointerdown', 'scroll', 'keydown'].forEach(ev => document.addEventListener(ev, clearTips, true));
 }
 function setupRipple() {
   if (window._rippleBound) return; window._rippleBound = true;
@@ -1501,48 +1858,84 @@ window.addEventListener('resize', debounce(applyMiniMode, 150));
 
 /* ---------- MENU ---------- */
 const MENU = [
-  { id:'dashboard', icon:'fa-chart-pie', label:'Dashboard', rbacModule:'dashboard', color:'#6366f1' },
-  { id:'g-sales', icon:'fa-cart-shopping', label:'Penjualan', color:'#10b981', children:[
-    { id:'pos', icon:'fa-cash-register', label:'POS / Kasir', module:'sales', rbacModule:'pos', perm:'create' },
-    { id:'sales', icon:'fa-receipt', label:'Daftar Penjualan', module:'sales', rbacModule:'sales' },
-    { id:'shipments', icon:'fa-truck-fast', label:'Pengiriman', module:'sales', rbacModule:'shipments' },
-    { id:'returns', icon:'fa-rotate-left', label:'Retur', module:'sales', rbacModule:'returns' },
+  { id:'dashboard', icon:'fa-chart-pie', label:'Dashboard', rbacModule:'dashboard', color:'#3f6212',
+    desc:'Ringkasan bisnis: omzet, stok menipis, & aktivitas terbaru dalam satu tampilan.' },
+  { id:'g-sales', icon:'fa-cart-shopping', label:'Penjualan', color:'#10b981',
+    desc:'Semua yang berkaitan dengan transaksi jual ke pelanggan, dari kasir sampai pengiriman.', children:[
+    { id:'pos', icon:'fa-cash-register', label:'POS / Kasir', module:'sales', rbacModule:'pos', perm:'create',
+      desc:'Kasir untuk transaksi jual langsung (walk-in). Pilih produk, input qty, lalu bayar — stok otomatis berkurang.' },
+    { id:'sales', icon:'fa-receipt', label:'Daftar Penjualan', module:'sales', rbacModule:'sales',
+      desc:'Daftar semua order penjualan beserta status proses & status bayar. Bisa filter, ubah status, dan cetak invoice.' },
+    { id:'shipments', icon:'fa-truck-fast', label:'Pengiriman', module:'sales', rbacModule:'shipments',
+      desc:'Kelola pengiriman order: buat resi, update status kirim sampai diterima pelanggan.' },
+    { id:'returns', icon:'fa-rotate-left', label:'Retur', module:'sales', rbacModule:'returns',
+      desc:'Catat barang yang dikembalikan pelanggan & kelola refund/tukar.' },
   ]},
-  { id:'g-inventory', icon:'fa-boxes-stacked', label:'Inventory', color:'#f59e0b', children:[
-    { id:'products', icon:'fa-box', label:'Produk', module:'core', rbacModule:'products' },
-    { id:'bundles', icon:'fa-boxes-stacked', label:'Product Bundle', module:'core', rbacModule:'products' },
-    { id:'inventory', icon:'fa-warehouse', label:'Stok & Pergerakan', module:'inventory', rbacModule:'inventory' },
-    { id:'stockopname', icon:'fa-clipboard-check', label:'Stok Opname', module:'inventory', rbacModule:'inventory', perm:'edit' },
+  { id:'g-inventory', icon:'fa-boxes-stacked', label:'Inventory', color:'#f59e0b',
+    desc:'Pantau & kelola stok barang di semua gudang/outlet.', children:[
+    { id:'products', icon:'fa-box', label:'Produk', module:'core', rbacModule:'products',
+      desc:'Daftar master produk: nama, SKU, harga beli/jual, & stok per produk.' },
+    { id:'bundles', icon:'fa-boxes-stacked', label:'Product Bundle', module:'core', rbacModule:'products',
+      desc:'Buat paket produk (bundle) yang berisi beberapa produk, dijual sebagai 1 item.' },
+    { id:'inventory', icon:'fa-warehouse', label:'Stok & Pergerakan', module:'inventory', rbacModule:'inventory',
+      desc:'Lihat pergerakan stok (masuk/keluar) per produk & gudang, lengkap dengan riwayatnya.' },
+    { id:'stockopname', icon:'fa-clipboard-check', label:'Stok Opname', module:'inventory', rbacModule:'inventory', perm:'edit',
+      desc:'Hitung ulang stok fisik di gudang & bandingkan dengan stok sistem untuk cek akurasi. Bisa pilih SKU & gudang mana saja yang mau dihitung.' },
   ]},
-  { id:'g-master', icon:'fa-tags', label:'Master Data', color:'#14b8a6', children:[
-    { id:'categories', icon:'fa-layer-group', label:'Kategori', module:'core', rbacModule:'products' },
-    { id:'brands', icon:'fa-copyright', label:'Brand', module:'core', rbacModule:'products' },
-    { id:'units', icon:'fa-ruler', label:'Satuan', module:'core', rbacModule:'products' },
+  { id:'g-master', icon:'fa-tags', label:'Master Data', color:'#14b8a6',
+    desc:'Data referensi yang dipakai di seluruh sistem: kategori, brand, satuan.', children:[
+    { id:'categories', icon:'fa-layer-group', label:'Kategori', module:'core', rbacModule:'products',
+      desc:'Kelompokkan produk berdasarkan kategori (misal: Makanan, Elektronik) untuk mempermudah pencarian & laporan.' },
+    { id:'brands', icon:'fa-copyright', label:'Brand', module:'core', rbacModule:'products',
+      desc:'Kelola daftar merek/brand produk yang dijual.' },
+    { id:'units', icon:'fa-ruler', label:'Satuan', module:'core', rbacModule:'products',
+      desc:'Kelola satuan produk (pcs, box, kg, dll) yang dipakai saat input produk.' },
   ]},
-  { id:'g-purchasing', icon:'fa-truck-ramp-box', label:'Pembelian', color:'#8b5cf6', children:[
-    { id:'purchases', icon:'fa-file-invoice', label:'Purchase Order', module:'purchasing', rbacModule:'purchases' },
-    { id:'suppliers', icon:'fa-handshake', label:'Supplier', module:'core', rbacModule:'suppliers' },
+  { id:'g-purchasing', icon:'fa-truck-ramp-box', label:'Pembelian', color:'#8b5cf6',
+    desc:'Proses belanja/restock barang dari supplier.', children:[
+    { id:'purchases', icon:'fa-file-invoice', label:'Purchase Order', module:'purchasing', rbacModule:'purchases',
+      desc:'Buat & kelola Purchase Order (PO) ke supplier, catat barang diterima & pembayaran ke supplier.' },
+    { id:'suppliers', icon:'fa-handshake', label:'Supplier', module:'core', rbacModule:'suppliers',
+      desc:'Daftar supplier/pemasok barang beserta kontak & riwayat transaksi.' },
   ]},
-  { id:'g-finance', icon:'fa-building-columns', label:'Keuangan', color:'#0ea5e9', children:[
-    { id:'expenses', icon:'fa-money-bill-wave', label:'Pengeluaran', module:'finance', rbacModule:'expenses' },
-    { id:'payments', icon:'fa-credit-card', label:'Pembayaran', module:'finance', rbacModule:'payments' },
-    { id:'accounts', icon:'fa-book', label:'Chart of Accounts', module:'finance', rbacModule:'accounts' },
-    { id:'reports', icon:'fa-file-invoice-dollar', label:'Laporan', module:'reports', rbacModule:'reports' },
+  { id:'g-finance', icon:'fa-building-columns', label:'Keuangan', color:'#0ea5e9',
+    desc:'Pantau arus kas, biaya, & laporan keuangan bisnis.', children:[
+    { id:'expenses', icon:'fa-money-bill-wave', label:'Pengeluaran', module:'finance', rbacModule:'expenses',
+      desc:'Catat pengeluaran operasional (sewa, gaji, listrik, dll) di luar pembelian stok.' },
+    { id:'payments', icon:'fa-credit-card', label:'Pembayaran', module:'finance', rbacModule:'payments',
+      desc:'Riwayat semua pembayaran masuk & keluar.' },
+    { id:'accounts', icon:'fa-book', label:'Chart of Accounts', module:'finance', rbacModule:'accounts',
+      desc:'Daftar akun keuangan (Chart of Accounts) untuk pencatatan pembukuan.' },
+    { id:'reports', icon:'fa-file-invoice-dollar', label:'Laporan', module:'reports', rbacModule:'reports',
+      desc:'Laporan laba-rugi, omzet, & performa bisnis dalam periode tertentu.' },
   ]},
-  { id:'g-relations', icon:'fa-users-rectangle', label:'Relasi', color:'#ec4899', children:[
-    { id:'customers', icon:'fa-user-group', label:'Pelanggan', module:'core', rbacModule:'customers' },
-    { id:'employees', icon:'fa-user-tie', label:'Karyawan', module:'hr', rbacModule:'employees' },
-    { id:'attendance', icon:'fa-calendar-check', label:'Absensi', module:'hr', rbacModule:'employees' },
-    { id:'promotions', icon:'fa-gift', label:'Promo', module:'marketing', rbacModule:'promotions' },
+  { id:'g-relations', icon:'fa-users-rectangle', label:'Relasi', color:'#ec4899',
+    desc:'Kelola hubungan dengan pelanggan & tim internal.', children:[
+    { id:'customers', icon:'fa-user-group', label:'Pelanggan', module:'core', rbacModule:'customers',
+      desc:'Database pelanggan: kontak, riwayat belanja, & total transaksi.' },
+    { id:'employees', icon:'fa-user-tie', label:'Karyawan', module:'hr', rbacModule:'employees',
+      desc:'Data karyawan: jabatan, kontak, & akses kerja.' },
+    { id:'attendance', icon:'fa-calendar-check', label:'Absensi', module:'hr', rbacModule:'employees',
+      desc:'Catat kehadiran harian karyawan (hadir/izin/sakit/alpa).' },
+    { id:'promotions', icon:'fa-gift', label:'Promo', module:'marketing', rbacModule:'promotions',
+      desc:'Buat & kelola promo/diskon untuk pelanggan.' },
   ]},
-  { id:'g-system', icon:'fa-gear', label:'Sistem', color:'#64748b', children:[
-    { id:'business', icon:'fa-briefcase', label:'Profil Bisnis', rbacModule:'settings' },
-    { id:'outlets', icon:'fa-store', label:'Outlet & Gudang', module:'multiOutlet', rbacModule:'outlets' },
-    { id:'users', icon:'fa-key', label:'Users', rbacModule:'users' },
-    { id:'roles', icon:'fa-shield-halved', label:'Role & Permission', rbacModule:'roles' },
-    { id:'modules', icon:'fa-cubes', label:'Modul', rbacModule:'modules' },
-    { id:'audit', icon:'fa-clipboard-list', label:'Audit Log', rbacModule:'audit' },
-    { id:'backup', icon:'fa-database', label:'Backup', rbacModule:'backup' },
+  { id:'g-system', icon:'fa-gear', label:'Sistem', color:'#64748b',
+    desc:'Pengaturan & administrasi sistem secara keseluruhan.', children:[
+    { id:'business', icon:'fa-briefcase', label:'Profil Bisnis', rbacModule:'settings',
+      desc:'Atur profil bisnis: nama, alamat, logo, & warna tampilan.' },
+    { id:'outlets', icon:'fa-store', label:'Outlet & Gudang', module:'multiOutlet', rbacModule:'outlets',
+      desc:'Kelola daftar outlet/gudang & stok per lokasi (multi-cabang).' },
+    { id:'users', icon:'fa-key', label:'Users', rbacModule:'users',
+      desc:'Kelola akun pengguna yang bisa login ke sistem ini.' },
+    { id:'roles', icon:'fa-shield-halved', label:'Role & Permission', rbacModule:'roles',
+      desc:'Atur peran (role) & hak akses tiap fitur untuk setiap user.' },
+    { id:'modules', icon:'fa-cubes', label:'Modul', rbacModule:'modules',
+      desc:'Aktifkan/nonaktifkan modul fitur sesuai kebutuhan bisnis.' },
+    { id:'audit', icon:'fa-clipboard-list', label:'Audit Log', rbacModule:'audit',
+      desc:'Riwayat aktivitas semua user di sistem (siapa mengubah apa & kapan).' },
+    { id:'backup', icon:'fa-database', label:'Backup', rbacModule:'backup',
+      desc:'Backup & export data sistem untuk cadangan.' },
   ]},
 ];
 const TITLES = {};
@@ -1563,7 +1956,7 @@ function passFilter(item) {
 
 function renderNavChild(item) {
   const active = S.page === item.id;
-  return `<a href="#" data-page="${item.id}" class="nav-item flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-all ${active ? 'active text-[var(--primary)] bg-[var(--primary-soft)] font-semibold' : 'text-soft hover:bg-[var(--bg-soft)]'}" title="${esc(item.label)}">
+  return `<a href="#" data-page="${item.id}" class="nav-item flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-all ${active ? 'active text-[var(--primary)] bg-[var(--primary-soft)] font-semibold' : 'text-soft hover:bg-[var(--bg-soft)]'}" data-tip="${esc(item.desc || item.label)}">
     <i class="fa-solid ${item.icon} w-4 text-center text-[11px] flex-shrink-0"></i>
     <span class="nav-label truncate flex-1">${esc(item.label)}</span>
     ${active ? '<span class="w-1 h-1 rounded-full bg-[var(--primary)]"></span>' : ''}</a>`;
@@ -1579,7 +1972,7 @@ function buildMenu() {
       const isOpen = !!SIDEBAR_STATE.open[group.id];
       const hasActiveChild = kids.some(k => k.id === S.page);
       html += `<div class="nav-group mb-1" data-group="${group.id}">
-        <button class="nav-parent w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${hasActiveChild ? 'text-main' : 'text-soft'} hover:bg-[var(--bg-soft)]" onclick="toggleNavGroup('${group.id}')" title="${esc(group.label)}">
+        <button class="nav-parent w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${hasActiveChild ? 'text-main' : 'text-soft'} hover:bg-[var(--bg-soft)]" onclick="toggleNavGroup('${group.id}')" data-tip="${esc(group.desc || group.label)}">
           <span class="nav-icon w-6 h-6 rounded-md flex items-center justify-center flex-shrink-0" style="background:${hexA(group.color, .15)};color:${group.color}"><i class="fa-solid ${group.icon} text-[11px]"></i></span>
           <span class="nav-label flex-1 text-left truncate">${esc(group.label)}</span>
           <i class="nav-arrow fa-solid fa-chevron-down text-[10px] text-muted ${isOpen ? 'rotate-180' : ''}"></i>
@@ -1651,12 +2044,14 @@ function renderPage(page) {
 /* ---------- Command Palette ---------- */
 const CMD_ACTIONS = [
   { id:'new-sale', icon:'fa-cart-plus', label:'Transaksi Penjualan Baru', hint:'Sales', perm:'create', module:'sales' },
+  { id:'bulk-order', icon:'fa-layer-group', label:'Bulk Order (banyak order sekaligus)', hint:'Sales', perm:'create', module:'sales' },
   { id:'new-po', icon:'fa-file-circle-plus', label:'Purchase Order Baru', hint:'Purchasing', perm:'create', module:'purchases' },
   { id:'new-product', icon:'fa-box', label:'Tambah Produk', hint:'Inventory', perm:'create', module:'products' },
   { id:'new-customer', icon:'fa-user-plus', label:'Tambah Pelanggan', hint:'CRM', perm:'create', module:'customers' },
   { id:'new-expense', icon:'fa-money-bill', label:'Catat Pengeluaran', hint:'Finance', perm:'create', module:'expenses' },
   { id:'adjust-stock', icon:'fa-sliders', label:'Stock Adjustment', hint:'Inventory', perm:'edit', module:'inventory' },
   { id:'stock-transfer', icon:'fa-right-left', label:'Stock Transfer', hint:'Inventory', perm:'edit', module:'inventory' },
+  { id:'stock-opname', icon:'fa-clipboard-list', label:'Mulai Stock Opname', hint:'Inventory', perm:'edit', module:'inventory' },
   { id:'restock-ai', icon:'fa-wand-magic-sparkles', label:'Rekomendasi Restock (AI)', hint:'Inventory' },
   { id:'aging', icon:'fa-clock-rotate-left', label:'Laporan Aging Piutang', hint:'Reports' },
   { id:'aging-payable', icon:'fa-hand-holding-dollar', label:'Laporan Aging Hutang', hint:'Reports' },
@@ -1716,12 +2111,14 @@ function cmdRun(id) {
   setTimeout(() => {
     switch (id) {
       case 'new-sale': return openSaleForm();
+      case 'bulk-order': return openBulkOrderForm();
       case 'new-po': return openPOForm();
       case 'new-product': return openForm('products');
       case 'new-customer': return openForm('customers');
       case 'new-expense': return openExpForm();
       case 'adjust-stock': return openAdjustForm();
       case 'stock-transfer': return openTransferForm();
+      case 'stock-opname': return renderPage('stockopname');
       case 'restock-ai': return showRestockRecommend();
       case 'aging': return (renderPage('reports'), setTimeout(loadAgingReport, 250));
       case 'aging-payable': return (renderPage('reports'), setTimeout(loadAgingPayableReport, 250));
@@ -1974,13 +2371,13 @@ function printInvoiceA4(saleData) {
         ${S.config.address ? `<div style="font-size:12px;color:#555">${esc(S.config.address)}</div>` : ''}
         ${S.config.phone ? `<div style="font-size:12px;color:#555">Telp: ${esc(S.config.phone)}</div>` : ''}
         ${S.config.email ? `<div style="font-size:12px;color:#555">${esc(S.config.email)}</div>` : ''}</div>
-      <div style="text-align:right"><div style="font-size:28px;font-weight:800;color:#6366f1">INVOICE</div>
+      <div style="text-align:right"><div style="font-size:28px;font-weight:800;color:var(--primary)">INVOICE</div>
         <div style="font-size:13px;color:#666">${esc(order.nomor)}</div>
         <div style="font-size:13px;color:#666">${fmtDate(order.tanggal)}</div></div>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px">
       <div><div style="font-size:11px;text-transform:uppercase;color:#888;font-weight:700">Kepada</div><div style="font-weight:600">${esc(order.customer_nama || 'Walk-in')}</div></div>
-      <div><div style="font-size:11px;text-transform:uppercase;color:#888;font-weight:700">Status</div><div style="font-weight:600">${esc(order.status_bayar || order.status || 'pending')}</div></div>
+      <div><div style="font-size:11px;text-transform:uppercase;color:#888;font-weight:700">Status</div><div style="font-weight:600">${esc(SALES_PAYMENT_LABELS[order.status_bayar] || 'Belum Bayar')}</div></div>
     </div>
     <table style="width:100%;border-collapse:collapse;font-size:13px;margin-bottom:16px">
       <thead><tr style="background:#f3f4f6">
@@ -2002,7 +2399,7 @@ function printInvoiceA4(saleData) {
         ${Number(order.diskon) > 0 ? `<div style="display:flex;justify-content:space-between;padding:4px 0"><span>Diskon</span><span>-${rp(order.diskon)}</span></div>` : ''}
         ${Number(order.pajak) > 0 ? `<div style="display:flex;justify-content:space-between;padding:4px 0"><span>Pajak</span><span>+${rp(order.pajak)}</span></div>` : ''}
         ${Number(order.biaya_kirim) > 0 ? `<div style="display:flex;justify-content:space-between;padding:4px 0"><span>Ongkir</span><span>+${rp(order.biaya_kirim)}</span></div>` : ''}
-        <div style="display:flex;justify-content:space-between;padding:12px 0;border-top:2px solid #6366f1;font-size:18px;font-weight:800;color:#6366f1"><span>TOTAL</span><span>${rp(order.total)}</span></div>
+        <div style="display:flex;justify-content:space-between;padding:12px 0;border-top:2px solid var(--primary);font-size:18px;font-weight:800;color:var(--primary)"><span>TOTAL</span><span>${rp(order.total)}</span></div>
       </div>
     </div>
     <div style="margin-top:48px;text-align:center;font-size:11px;color:#888">Terima kasih atas kepercayaan Anda 🙏</div>
@@ -2050,7 +2447,7 @@ function renderDashboardCharts(d) {
   const ch = d.sales_by_channel || {};
   if (chEl && Object.keys(ch).length) {
     destroy('channel');
-    const colors = ['#6366f1','#10b981','#f59e0b','#ef4444','#ec4899','#06b6d4','#8b5cf6'];
+    const colors = ['#3f6212','#c9a227','#06b6d4','#ef4444','#ec4899','#8b5cf6','#f59e0b'];
     _chartInstances.channel = new Chart(chEl.getContext('2d'), {
       type:'doughnut',
       data:{ labels:Object.keys(ch), datasets:[{ data:Object.values(ch), backgroundColor:colors.slice(0, Object.keys(ch).length), borderWidth:0 }] },
@@ -2298,26 +2695,42 @@ async function loadList(mod, force) {
     const payload = buildListPayload(mod, f);
     const r = await api(mod + '.list', payload, { ttl: 15000 });
     S.data[mod] = r.items || [];
-    renderTable(mod, S.data[mod], r.total);
+    // v9.0 [poin 7]: kartu statistik produk (Nilai Stok/Stok Tipis/Stok Habis) perlu
+    // agregat dari SELURUH data terfilter, bukan cuma 1 halaman (25 baris) yg sedang
+    // ditampilkan di tabel - diambil TERPISAH dgn limit lebih besar khusus utk hitung
+    // statistik (tidak dirender jadi baris tabel), dan di-cache 30s lewat api() sendiri
+    // jadi tidak ikut fetch ulang tiap kali cuma pindah halaman/nomor.
+    if (mod === 'products') {
+      try {
+        const statsResp = await api('products.list', { ...payload, limit:1000, page:1 }, { ttl: 30000 });
+        r._statsItems = statsResp.items || [];
+      } catch (_) { /* stat sekunder - kalau gagal, renderTable jatuh balik ke r.items */ }
+    }
+    renderTable(mod, r);
     updateFilterBadge(mod);
   } catch (e) {
     box.innerHTML = `<div class="rounded-lg p-3 text-sm" style="background:#fee2e2;color:#991b1b">${esc(e.message)}</div>`;
   }
 }
 
-function renderTable(mod, items, totalFromServer) {
+function renderTable(mod, r) {
   const box = $('#list-' + mod); if (!box) return;
   const cfg = CRUD[mod];
-  const total = totalFromServer ?? items.length;
+  const items = r.items || [];
+  const total = r.total ?? items.length;
   setText('#meta-' + mod, `${items.length} dari ${total} data`);
   const statsBox = $('#stats-' + mod);
   if (statsBox) {
     let stats = [{ label:'Total', value: total }, { label:'Ditampilkan', value: items.length, color:'var(--primary)' }];
     if (mod === 'products') {
-      const lowStock = items.filter(p => Number(p.stok) > 0 && Number(p.stok) <= Number(p.min_stock)).length;
-      const outStock = items.filter(p => Number(p.stok) === 0).length;
+      // FIX v9.0 [poin 7]: pakai r._statsItems (agregat SELURUH data terfilter, dari
+      // loadList) kalau ada - bukan `items` yg sekarang cuma 1 halaman (25 baris),
+      // supaya kartu Nilai Stok/Stok Tipis/Stok Habis tidak jadi keliru krn pagination.
+      const statsItems = r._statsItems || items;
+      const lowStock = statsItems.filter(p => Number(p.stok) > 0 && Number(p.stok) <= Number(p.min_stock)).length;
+      const outStock = statsItems.filter(p => Number(p.stok) === 0).length;
       if (canViewCost()) {
-        const invValue = items.reduce((s, p) => s + Number(p.stok||0) * Number(p.harga_beli||0), 0);
+        const invValue = statsItems.reduce((s, p) => s + Number(p.stok||0) * Number(p.harga_beli||0), 0);
         stats.push({ label:'Nilai Stok', value: rp(invValue), color:'var(--success)' });
       }
       stats.push({ label:'Stok Tipis', value: lowStock, color:'var(--warn)' }, { label:'Stok Habis', value: outStock, color:'var(--danger)' });
@@ -2358,8 +2771,8 @@ function renderTable(mod, items, totalFromServer) {
       </tr>`;
     }).join('')}</tbody>
   </table></div>
-  <div class="flex items-center justify-between mt-3 text-xs text-muted">
-    <span>Menampilkan <b class="text-main">${items.length}</b> dari <b class="text-main">${total}</b> data</span>
+  <div class="flex items-center justify-between flex-wrap gap-2 mt-3">
+    ${renderPager(mod, r)}
     <button onclick="bulkDelete('${mod}')" id="bulkDel-${mod}" class="hidden px-3 py-1 text-white rounded text-[10px]" style="background:var(--danger)">🗑️ Hapus Terpilih</button>
   </div>`;
   $$('.row-sel-' + mod).forEach(cb => cb.onchange = () => updateBulkBtn(mod));
@@ -2448,12 +2861,13 @@ async function openForm(mod, id) {
   const root = $('#modalRoot'); if (root) { root.innerHTML = ''; root.appendChild(m); }
   setTimeout(() => m.querySelector('input')?.focus(), 100);
 }
-async function submitForm(mod, id) {
+async function _submitFormImpl(mod, id) {
   const cfg = CRUD[mod]; const f = $('#form-' + mod);
   if (!cfg || !f) return;
+  const btn = $('#btn-sub-' + mod);
+  if (btn && btn.disabled) return;
   const d = {};
   cfg.form.forEach(([k, , tp]) => { const el = f.elements[k]; if (!el) return; d[k] = tp === 'number' ? Number(el.value || 0) : el.value; });
-  const btn = $('#btn-sub-' + mod);
   if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-circle-notch spin mr-1"></i>...'; }
   try {
     if (id) await api(mod + '.update', { id, ...d }, { cache:false });
@@ -2465,6 +2879,8 @@ async function submitForm(mod, id) {
     if (btn) { btn.disabled = false; btn.innerHTML = `<i class="fa-solid fa-save mr-1"></i>${t('save')}`; }
   }
 }
+// v9.0: anti double-click - key per `mod` (submit form "customers" & "suppliers" independen).
+const submitForm = withLock(mod => 'submitForm:' + mod, _submitFormImpl);
 async function delItem(mod, id) {
   if (!confirm(t('confirmDelete'))) return;
   const backup = (S.data[mod] || []).find(x => x.id === id);
@@ -2510,13 +2926,17 @@ async function renderSales(force) {
         <div><h2 class="font-semibold text-sm text-main">Daftar Penjualan</h2><div class="text-[10px] text-muted mt-0.5" id="meta-sales">Memuat…</div></div>
         <div class="flex gap-2">
           <button onclick="invalidatePage('sales');renderSales(true)" class="w-8 h-8 rounded-lg text-soft bg-soft flex items-center justify-center" data-tip="Refresh"><i class="fa-solid fa-rotate text-xs"></i></button>
+          ${hasPerm('create','sales') ? `<button onclick="openBulkOrderForm()" class="px-3 py-1.5 rounded-lg text-sm font-medium bg-soft text-soft" title="Input banyak order sekaligus"><i class="fa-solid fa-layer-group mr-1 text-xs"></i>Bulk Order</button>` : ''}
           ${hasPerm('create','sales') ? `<button onclick="openSaleForm()" class="px-3 py-1.5 rounded-lg text-white text-sm font-medium" style="background:var(--primary)"><i class="fa-solid fa-plus mr-1 text-xs"></i>Transaksi</button>` : ''}
         </div>
       </div>
       <div id="pipeline-sales"></div>
       ${renderFilterBar('sales', {
-        statuses: ['draft','pending','paid','processing','picking','packing','shipped','delivered','completed','cancelled','returned','refund'],
+        statusLabel: 'Status Pembayaran',
+        statuses: SALES_PAYMENT_STATUS.map(s => s.key),
+        statusLabels: SALES_PAYMENT_LABELS,
         extraFields: [
+          { key:'status', label:'Status Proses', type:'select', options: SALES_PROCESS_STATUS.map(s => ({ value:s.key, label:s.label })).concat([{value:'cancelled',label:'Dibatalkan'},{value:'refund',label:'Refund'}]) },
           { key:'channel', label:'Channel', type:'select', options:['offline','shopee','tokopedia','tiktok','lazada','website','whatsapp','reseller'] },
           { key:'customer_nama', label:'Customer', ph:'Nama customer' },
         ],
@@ -2537,8 +2957,11 @@ async function renderSales(force) {
     const totalAmount = items.reduce((s, o) => s + Number(o.total||0), 0);
     const totalLaba = items.reduce((s, o) => s + Number(o.laba_kotor||0), 0);
     const avg = items.length ? totalAmount / items.length : 0;
-    const paid = items.filter(o => o.status_bayar === 'paid').length;
-    const unpaid = items.filter(o => o.status_bayar !== 'paid').length;
+    // FIX v9.0: pakai agregat backend (_paymentCounts, seluruh data terfilter) - bukan
+    // items.filter() yg dulu cuma menghitung baris di 1 halaman/batch yg sedang tampil.
+    const pc = r._paymentCounts || {};
+    const paid = pc.paid || 0;
+    const unpaid = (pc.pending || 0) + (pc.partial || 0);
     const statsArr = [
       { label:'Total Transaksi', value: items.length, color:'var(--primary)' },
       { label:'Total Omzet', value: rp(totalAmount), color:'var(--success)' },
@@ -2549,7 +2972,7 @@ async function renderSales(force) {
     updateFilterBadge('sales');
     if (!items.length) {
       const f = getFilterState('sales');
-      const isFiltered = f.search || f.status || f.dateFrom || f.dateTo;
+      const isFiltered = f.search || f.status || f.dateFrom || f.dateTo || Object.values(f.extra||{}).some(v => v);
       setHtml('#salesList', isFiltered
         ? `<div class="text-center py-12"><i class="fa-solid fa-filter text-3xl text-muted mb-3 opacity-40"></i><div class="font-semibold text-sm text-main mb-1">Tidak ada transaksi cocok</div><button onclick="resetFilters('sales');renderSales(true)" class="px-4 py-2 rounded-lg text-white text-sm mt-3" style="background:var(--primary)">Reset Filter</button></div>`
         : emptyState('fa-receipt', 'Belum ada transaksi', hasPerm('create','sales') ? 'Transaksi Sekarang' : null, 'openSaleForm()'));
@@ -2565,13 +2988,13 @@ async function renderSales(force) {
         <th class="text-left py-2 px-3 text-[10px] font-semibold text-muted uppercase hide-m sortable ${sortCls('tanggal')}" onclick="setSort('sales','tanggal')">Tanggal</th>
         <th class="text-left py-2 px-3 text-[10px] font-semibold text-muted uppercase">Customer</th>
         <th class="text-left py-2 px-3 text-[10px] font-semibold text-muted uppercase hide-m">Channel</th>
-        <th class="text-left py-2 px-3 text-[10px] font-semibold text-muted uppercase">Status</th>
+        <th class="text-left py-2 px-3 text-[10px] font-semibold text-muted uppercase">Bayar</th>
+        <th class="text-left py-2 px-3 text-[10px] font-semibold text-muted uppercase hide-m">Proses</th>
         <th class="text-left py-2 px-3 text-[10px] font-semibold text-muted uppercase hide-m">Pengiriman</th>
         <th class="text-right py-2 px-3 text-[10px] font-semibold text-muted uppercase sortable ${sortCls('total')}" onclick="setSort('sales','total')">Total</th>
         <th class="text-right py-2 px-3 w-28"></th>
       </tr></thead>
       <tbody>${items.map(o => {
-        const st = o.status_bayar || o.status || 'pending';
         const ship = window._salesShipMap[String(o.id)];
         const readyToShip = ['packing','shipped','delivered','completed'].includes(String(o.status));
         let shipCell = '<span class="text-muted text-xs">-</span>';
@@ -2586,30 +3009,35 @@ async function renderSales(force) {
           <td class="py-2 px-3 text-muted text-xs hide-m">${fmtDate(o.tanggal)}</td>
           <td class="py-2 px-3 text-soft text-xs">${esc(o.customer_nama || 'Walk-in')}</td>
           <td class="py-2 px-3 text-soft text-xs capitalize hide-m">${esc(o.channel || '-')}</td>
-          <td class="py-2 px-3">${renderSalesFlowBadge(st)}</td>
+          <td class="py-2 px-3">${renderSalesPaymentBadge(o.status_bayar)}</td>
+          <td class="py-2 px-3 hide-m">${renderSalesProcessBadge(o.status)}</td>
           <td class="py-2 px-3 hide-m">${shipCell}</td>
           <td class="py-2 px-3 text-right font-semibold text-xs text-main">${rp(o.total)}</td>
           <td class="py-2 px-3 text-right whitespace-nowrap">
             <button onclick="viewSale('${o.id}')" class="w-7 h-7 rounded text-muted hover:text-indigo-500" data-tip="Detail"><i class="fa-solid fa-eye text-xs"></i></button>
             ${getNextStatusButton(o)}
+            ${getPaymentToggleButton(o)}
             ${hasPerm('delete','sales') ? `<button onclick="delSale('${o.id}')" class="w-7 h-7 rounded text-muted hover:text-red-500" data-tip="Hapus"><i class="fa-solid fa-trash text-xs"></i></button>` : ''}
           </td>
         </tr>`;
       }).join('')}</tbody>
     </table></div>
-    <div class="text-xs text-muted mt-3">Menampilkan <b class="text-main">${items.length}</b> dari <b class="text-main">${r.total || items.length}</b> transaksi</div>`);
+    ${renderPager('sales', r)}`);
   } catch (e) { setHtml('#salesList', `<div class="rounded-lg p-3 text-sm" style="background:#fee2e2;color:#991b1b">${esc(e.message)}</div>`); }
 }
 // v8.8: panel ringkasan alur penjualan (jumlah order per tahap) + klik utk filter status,
 // bulk-select & bulk-update status, dan integrasi cepat ke Pengiriman - ditambahkan
 // supaya flow Penjualan→Pengiriman lebih gampang dipahami & dikerjakan tim.
+// FIX v9.0 [poin 6]: sekarang murni menampilkan tahap PROSES (SALES_PROCESS_STATUS,
+// tidak ada lagi 'paid' di sini) & klik-nya mengatur filter lanjutan status PROSES
+// (f.extra.status), BUKAN filter status pembayaran utama (f.status) lagi.
 function renderSalesPipeline(counts) {
   const f = getFilterState('sales');
   return `<div class="overflow-x-auto border-b" style="border-color:var(--border)">
     <div class="flex gap-2 p-3 min-w-max">
-      ${SALES_FLOW.map(st => {
+      ${SALES_PROCESS_STATUS.map(st => {
         const n = counts[st.key] || 0;
-        const active = f.status === st.key;
+        const active = f.extra.status === st.key;
         return `<button onclick="setSalesStatusFilter('${st.key}')" class="flex flex-col items-center justify-center px-4 py-2 rounded-lg border min-w-[80px] transition" style="border-color:${active ? st.color : 'var(--border)'};background:${active ? hexA(st.color,.12) : 'var(--bg-soft)'}">
           <i class="fa-solid ${st.icon} text-sm mb-1" style="color:${st.color}"></i>
           <div class="text-base font-bold leading-none" style="color:${st.color}">${n}</div>
@@ -2621,7 +3049,8 @@ function renderSalesPipeline(counts) {
 }
 function setSalesStatusFilter(status) {
   const f = getFilterState('sales');
-  f.status = (f.status === status) ? '' : status;
+  f.extra.status = (f.extra.status === status) ? '' : status;
+  f.page = 1; // v9.0 [poin 7]
   renderSales(true);
 }
 function toggleSalesSelectAll(chk) {
@@ -2632,27 +3061,47 @@ function toggleSalesSelect(id, checked) {
   if (checked) window._salesSelected.add(id); else window._salesSelected.delete(id);
   renderBulkSalesBar();
 }
+// FIX v9.0 [poin 6]: bulk update sekarang punya 2 dimensi independen - pilih dulu mau
+// ubah "Status Proses" atau "Status Pembayaran", baru pilih nilainya (opsi kedua select
+// menyesuaikan otomatis lewat onBulkSalesFieldChange).
+function bulkSalesTargetOptionsHtml(field) {
+  if (field === 'status_bayar') return SALES_PAYMENT_STATUS.map(s => `<option value="${s.key}">→ ${esc(s.label)}</option>`).join('');
+  return SALES_PROCESS_STATUS.map(s => `<option value="${s.key}">→ ${esc(s.label)}</option>`).join('')
+    + `<option value="cancelled">→ Dibatalkan</option><option value="refund">→ Refund</option>`;
+}
+function onBulkSalesFieldChange() {
+  const field = $('#bulkSalesField')?.value || 'status';
+  const sel = $('#bulkSalesTarget'); if (sel) sel.innerHTML = bulkSalesTargetOptionsHtml(field);
+}
 function renderBulkSalesBar() {
   const box = $('#bulk-sales'); if (!box) return;
   const n = window._salesSelected ? window._salesSelected.size : 0;
   if (!n) { box.innerHTML = ''; return; }
   box.innerHTML = `<div class="flex flex-wrap items-center gap-2 px-4 py-2.5" style="background:var(--primary-soft)">
     <span class="text-xs font-medium" style="color:var(--primary)">${n} transaksi dipilih</span>
-    <select id="bulkSalesTarget" class="px-2 py-1.5 rounded-lg text-xs border">${SALES_FLOW.map(st => `<option value="${st.key}">→ ${esc(st.label)}</option>`).join('')}</select>
+    <select id="bulkSalesField" onchange="onBulkSalesFieldChange()" class="px-2 py-1.5 rounded-lg text-xs border">
+      <option value="status">Ubah Status Proses</option>
+      <option value="status_bayar">Ubah Status Pembayaran</option>
+    </select>
+    <select id="bulkSalesTarget" class="px-2 py-1.5 rounded-lg text-xs border">${bulkSalesTargetOptionsHtml('status')}</select>
     <button id="bulkSalesApplyBtn" onclick="submitBulkSalesStatus()" class="px-3 py-1.5 rounded-lg text-white text-xs font-medium" style="background:var(--primary)">Terapkan</button>
     <button onclick="window._salesSelected.clear();document.querySelectorAll('.sales-row-chk').forEach(e=>e.checked=false);const sa=document.querySelector('#salesList thead input[type=checkbox]');if(sa)sa.checked=false;renderBulkSalesBar()" class="text-xs text-muted underline">Batal pilih</button>
   </div>`;
 }
-async function submitBulkSalesStatus() {
+async function _submitBulkSalesStatusImpl() {
   const ids = Array.from(window._salesSelected || []);
   if (!ids.length) return;
+  const field = $('#bulkSalesField')?.value || 'status';
   const target = $('#bulkSalesTarget')?.value;
-  const label = (SALES_FLOW_MAP[target] || {}).label || target;
-  if (!confirm(`Ubah status ${ids.length} transaksi ke "${label}"?`)) return;
+  const label = field === 'status_bayar'
+    ? (SALES_PAYMENT_STATUS_MAP[target] || {}).label || target
+    : (SALES_PROCESS_STATUS_MAP[target] || {}).label || target;
+  const dimensi = field === 'status_bayar' ? 'status pembayaran' : 'status proses';
+  if (!confirm(`Ubah ${dimensi} ${ids.length} transaksi ke "${label}"?`)) return;
   const btn = $('#bulkSalesApplyBtn');
-  if (btn) { if (btn.disabled) return; btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-circle-notch spin"></i>'; }
+  if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-circle-notch spin"></i>'; }
   try {
-    const r = await api('sales.bulk-update-status', { ids, status: target }, { cache:false });
+    const r = await api('sales.bulk-update-status', { ids, field, status: target }, { cache:false });
     toast(`${r.updated} transaksi diperbarui${r.errors && r.errors.length ? `, ${r.errors.length} gagal` : ''}`);
     window._salesSelected.clear();
     invalidateCache('sales'); invalidatePage('sales'); invalidatePage('dashboard');
@@ -2662,6 +3111,7 @@ async function submitBulkSalesStatus() {
     if (btn) { btn.disabled = false; btn.innerHTML = 'Terapkan'; }
   }
 }
+const submitBulkSalesStatus = withLock('submitBulkSalesStatus', _submitBulkSalesStatusImpl);
 async function openShipmentFromOrder(orderId, orderNomor) {
   const m = document.createElement('div');
   m.className = 'modal-bg fixed inset-0 bg-black/40 flex items-center justify-center z-[9500] p-3';
@@ -2678,13 +3128,13 @@ async function openShipmentFromOrder(orderId, orderNomor) {
   </div>`;
   const root = $('#modalRoot'); if (root) { root.innerHTML = ''; root.appendChild(m); }
 }
-async function submitShipmentFromOrder(orderId, orderNomor) {
+async function _submitShipmentFromOrderImpl(orderId, orderNomor) {
   const f = $('#shipForm'); if (!f) return;
   const d = {}; new FormData(f).forEach((v, k) => d[k] = v);
   if (!d.kurir) return toast('Kurir wajib diisi', 'error');
   d.order_id = orderId; d.order_nomor = orderNomor; d.tanggal = today(); d.status = 'shipped';
   const btn = $('#shipSubmitBtn');
-  if (btn) { if (btn.disabled) return; btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-circle-notch spin mr-1"></i>...'; }
+  if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-circle-notch spin mr-1"></i>...'; }
   try {
     await api('shipments.create', d, { cache:false });
     await api('sales.update-status', { id: orderId, status: 'shipped' }, { cache:false }).catch(() => {});
@@ -2697,6 +3147,7 @@ async function submitShipmentFromOrder(orderId, orderNomor) {
     if (btn) { btn.disabled = false; btn.innerHTML = 'Simpan &amp; Tandai Dikirim'; }
   }
 }
+const submitShipmentFromOrder = withLock('submitShipmentFromOrder', _submitShipmentFromOrderImpl);
 async function delSale(id) {
   if (!confirm('Hapus transaksi ini?')) return;
   try {
@@ -2790,7 +3241,6 @@ async function openSaleForm() {
     </div>`;
     const root = $('#modalRoot'); if (root) { root.innerHTML = ''; root.appendChild(m); }
     window._sItems = [];
-    window._saleSubmitting = false;
     try {
       const lastCust = localStorage.getItem('erp_last_customer');
       const sel = $('#s-cust');
@@ -2838,15 +3288,13 @@ function updSaleTotal() {
   const d = Number($('#s-disc')?.value || 0), p = Number($('#s-tax')?.value || 0), o = Number($('#s-ship')?.value || 0);
   setText('#s-total', rp(sub - d + p + o));
 }
-async function submitSale() {
-  if (window._saleSubmitting) return;
+async function _submitSaleImpl() {
   if (!window._sItems || !window._sItems.length) return toast('Tambahkan minimal 1 produk', 'error');
   const subtotal = window._sItems.reduce((s, i) => s + i.harga * i.qty, 0);
   const discAmount = Number($('#s-disc')?.value || 0);
   const discPct = subtotal > 0 ? (discAmount / subtotal * 100) : 0;
   const maxDisc = getMaxDiscountPct();
   if (discPct > maxDisc) return toast(`Diskon ${discPct.toFixed(1)}% melebihi limit role (${maxDisc}%)`, 'error');
-  window._saleSubmitting = true;
   const btn = $('#s-submit');
   if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-circle-notch spin mr-1"></i>...'; }
   const cs = $('#s-cust');
@@ -2869,10 +3317,195 @@ async function submitSale() {
   } catch (e) {
     toast(e.message, 'error');
     if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-save mr-1"></i>Simpan'; }
-  } finally {
-    window._saleSubmitting = false;
   }
 }
+const submitSale = withLock('submitSale', _submitSaleImpl);
+
+/* ---------- BULK ORDER (poin 5: input 50 order dlm 1 submit) ----------
+ * Memakai endpoint sales.bulk-create (lihat salesBulkCreate di Code.gs) - SATU
+ * request/SATU lock utk banyak order sekaligus, bukan memanggil sales.create N kali
+ * dari sini (yang masing2 bikin lock+koneksi Sheets API sendiri & tidak akan pernah
+ * cukup cepat utk target <3 detik pada 50 order). */
+async function openBulkOrderForm() {
+  try {
+    const pr = await api('products.list', { limit: 500 }, { ttl: 60000 });
+    const prod = (pr.items || []).filter(p => Number(p.stok) > 0);
+    if (!prod.length) return toast('Belum ada produk dengan stok', 'warn');
+    window._bulkOrderProducts = prod;
+    window._bulkOrderProductsBySku = {};
+    prod.forEach(p => { if (p.sku) window._bulkOrderProductsBySku[String(p.sku).toLowerCase()] = p; });
+    window._bulkOrderParsed = null;
+    const m = document.createElement('div');
+    m.className = 'modal-bg fixed inset-0 bg-black/40 flex items-center justify-center z-[9500] p-3';
+    m.innerHTML = `<div class="modal-card rounded-xl w-full max-w-3xl max-h-[92vh] overflow-y-auto bg-card">
+      <div class="flex items-center justify-between px-5 py-4 border-b sticky top-0 z-10 bg-card" style="border-color:var(--border)">
+        <h3 class="font-semibold text-sm text-main"><i class="fa-solid fa-layer-group mr-1"></i>Bulk Order</h3>
+        <button onclick="closeModal()" class="w-8 h-8 rounded-lg text-muted bg-soft flex items-center justify-center"><i class="fa-solid fa-times"></i></button>
+      </div>
+      <div class="p-5 space-y-4">
+        <div class="rounded-lg p-3 text-xs" style="background:var(--bg-soft)">
+          <div class="font-semibold text-main mb-1">Format (1 baris = 1 item produk, pisahkan kolom dgn koma atau Tab hasil paste dari Excel):</div>
+          <code class="block text-[11px] text-muted leading-relaxed">order_ref, customer, sku, qty, harga, channel, status_bayar</code>
+          <div class="text-muted mt-1 leading-relaxed">
+            • <b>order_ref</b> kosong = tiap baris jadi 1 order sendiri. Isi dgn kode yang sama utk menggabungkan beberapa produk ke dalam 1 order.<br>
+            • <b>harga</b> kosong = pakai harga jual default produk.<br>
+            • <b>channel</b> / <b>status_bayar</b> kosong = pakai pengaturan default di bawah. Utk order <b>COD</b>, biarkan status_bayar kosong/"pending" - tandai lunas belakangan (di Daftar Penjualan) setelah kurir konfirmasi uang diterima.
+          </div>
+          <button onclick="fillBulkOrderExample()" class="mt-2 text-[11px] underline" style="color:var(--primary)">Isi contoh</button>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div><label class="block text-[11px] font-medium text-soft mb-1">Channel Default</label>
+            <select id="bo-channel" class="w-full px-3 py-2 border rounded-lg text-sm"><option value="offline">Offline</option><option value="shopee">Shopee</option><option value="tokopedia">Tokopedia</option><option value="tiktok">TikTok</option><option value="lazada">Lazada</option><option value="website">Website</option><option value="whatsapp">WhatsApp</option><option value="reseller">Reseller</option></select>
+          </div>
+          <div><label class="block text-[11px] font-medium text-soft mb-1">Status Bayar Default</label>
+            <select id="bo-statusbayar" class="w-full px-3 py-2 border rounded-lg text-sm"><option value="pending">Belum Bayar (COD / belum transfer)</option><option value="paid">Lunas (sudah transfer/prabayar)</option></select>
+          </div>
+        </div>
+        <div><label class="block text-[11px] font-medium text-soft mb-1">Data Order (maksimal 100 baris per pengiriman)</label>
+          <textarea id="bo-input" rows="10" class="w-full px-3 py-2 border rounded-lg text-xs font-mono" placeholder="order_ref,customer,sku,qty,harga,channel,status_bayar" oninput="$('#bo-submitBtn').disabled=true;setHtml('#bo-preview','')"></textarea>
+        </div>
+        <div id="bo-preview"></div>
+      </div>
+      <div class="flex justify-between items-center gap-2 px-5 py-3 border-t sticky bottom-0 bg-card" style="border-color:var(--border)">
+        <button onclick="closeModal()" class="px-4 py-2 rounded-lg text-soft text-sm bg-soft">Batal</button>
+        <div class="flex gap-2">
+          <button id="bo-previewBtn" onclick="previewBulkOrder()" class="px-4 py-2 rounded-lg text-sm font-medium bg-soft text-soft">Pratinjau</button>
+          <button id="bo-submitBtn" onclick="submitBulkOrder()" class="px-4 py-2 rounded-lg text-white text-sm font-medium disabled:opacity-40" style="background:var(--primary)" disabled>Kirim Order</button>
+        </div>
+      </div>
+    </div>`;
+    const root = $('#modalRoot'); if (root) { root.innerHTML = ''; root.appendChild(m); }
+  } catch (e) { toast(e.message, 'error'); }
+}
+function fillBulkOrderExample() {
+  const ta = $('#bo-input'); if (!ta) return;
+  const sample = (window._bulkOrderProducts || []).slice(0, 2);
+  if (!sample.length) return;
+  const lines = [`,Budi Santoso,${sample[0].sku},2,,whatsapp,pending`];
+  if (sample[1]) {
+    lines.push(`ORD-A,Siti Aminah,${sample[0].sku},1,,shopee,paid`);
+    lines.push(`ORD-A,Siti Aminah,${sample[1].sku},3,,shopee,paid`);
+  } else {
+    lines.push(`,Siti Aminah,${sample[0].sku},1,,shopee,paid`);
+  }
+  ta.value = lines.join('\n');
+  $('#bo-submitBtn').disabled = true; setHtml('#bo-preview', '');
+}
+// Parsing baris (mendukung pemisah koma ATAU tab), kelompokkan per order_ref, validasi
+// SKU thd katalog produk yg sudah dimuat. Murni bantuan pratinjau di sisi klien - backend
+// (salesBulkCreate) tetap validasi ulang semuanya (stok, diskon, dst) sebagai sumber kebenaran.
+function parseBulkOrderInput() {
+  const raw = ($('#bo-input')?.value || '').trim();
+  if (!raw) return { orders: [], errors: ['Data kosong'] };
+  const defChannel = $('#bo-channel')?.value || 'offline';
+  const defStatusBayar = $('#bo-statusbayar')?.value || 'pending';
+  const lines = raw.split('\n').map(l => l.trim()).filter(Boolean);
+  const errors = [];
+  const groups = {}; const order = [];
+  let autoRefN = 0;
+  lines.forEach((line, i) => {
+    const cells = (line.indexOf('\t') >= 0 ? line.split('\t') : line.split(',')).map(c => c.trim());
+    if (i === 0 && /^order_?ref$/i.test(cells[0] || '')) return; // lewati baris header kalau ada
+    const [refRaw, customer, sku, qtyRaw, hargaRaw, channelRaw, statusRaw] = cells;
+    if (!sku && !qtyRaw) return;
+    if (!sku) { errors.push(`Baris ${i+1}: SKU kosong`); return; }
+    const prod = window._bulkOrderProductsBySku[String(sku).toLowerCase()];
+    if (!prod) { errors.push(`Baris ${i+1}: SKU "${esc(sku)}" tidak ditemukan / stok habis`); return; }
+    const qty = Number(qtyRaw);
+    if (!qty || qty <= 0) { errors.push(`Baris ${i+1}: qty tidak valid`); return; }
+    const ref = refRaw || ('__auto' + (autoRefN++));
+    if (!groups[ref]) {
+      groups[ref] = {
+        ref, customer_nama: customer || 'Walk-in',
+        channel: (channelRaw || defChannel).toLowerCase(),
+        status_bayar: (statusRaw || defStatusBayar || 'pending').toLowerCase(),
+        items: [],
+      };
+      order.push(ref);
+    }
+    groups[ref].items.push({
+      product_id: prod.id, sku: prod.sku, nama: prod.nama,
+      qty, harga: hargaRaw ? Number(hargaRaw) : Number(prod.harga_jual),
+    });
+  });
+  return { orders: order.map(r => groups[r]), errors };
+}
+async function previewBulkOrder() {
+  const { orders, errors: clientErrors } = parseBulkOrderInput();
+  window._bulkOrderParsed = null;
+  const submitBtn = $('#bo-submitBtn');
+  if (submitBtn) submitBtn.disabled = true;
+  const totalItemsClient = orders.reduce((s, o) => s + o.items.length, 0);
+  if (!orders.length) {
+    setHtml('#bo-preview', `<div class="rounded-lg p-3 text-xs" style="background:#fee2e2;color:#991b1b">${clientErrors.map(e => esc(e)).join('<br>') || 'Tidak ada baris valid'}</div>`);
+    return;
+  }
+  const previewBtn = $('#bo-previewBtn');
+  if (previewBtn) { previewBtn.disabled = true; previewBtn.innerHTML = '<i class="fa-solid fa-circle-notch spin mr-1"></i>Memeriksa…'; }
+  try {
+    // v9.0: validasi ULANG ke server (dry_run:true - lihat salesBulkCreate) - stok yang
+    // dicek di sini SUNGGUHAN (termasuk pemakaian kumulatif antar-order & oleh transaksi
+    // lain yang mungkin terjadi bersamaan), bukan sekadar tebakan dari katalog yang
+    // dimuat di awal buka form. Totalnya juga otoritatif (termasuk limit diskon per role).
+    const r = await api('sales.bulk-create', {
+      dry_run: true,
+      orders: orders.map(o => ({
+        ref: o.ref, customer_nama: o.customer_nama, channel: o.channel, status_bayar: o.status_bayar,
+        items: o.items.map(i => ({ product_id: i.product_id, qty: i.qty, harga: i.harga })),
+      })),
+    }, { cache:false, timeout: 30000 });
+    window._bulkOrderParsed = orders.filter(o => r.orders.some(x => x.ref === o.ref));
+    const errors = clientErrors.concat(r.errors.map(e => `${e.ref || ('order #' + (e.idx + 1))}: ${e.error}`));
+    let html = `<div class="rounded-lg p-3 text-xs" style="background:${errors.length ? '#fef3c7' : '#d1fae5'};color:${errors.length ? '#92400e' : '#065f46'}">`;
+    html += `<div class="font-semibold mb-1"><i class="fa-solid fa-circle-check mr-1"></i>${r.created} order siap dikirim · ${totalItemsClient} baris item · nilai ${rp(r.total_nilai || 0)} (tervalidasi server)</div>`;
+    if (orders.length > 100) html += `<div class="font-medium">Baris melebihi 100 order - kelebihannya akan diabaikan saat kirim.</div>`;
+    if (errors.length) {
+      html += `<div class="font-medium mt-1">${errors.length} baris bermasalah (akan dilewati):</div><ul class="list-disc pl-4">${errors.slice(0, 10).map(e => `<li>${esc(e)}</li>`).join('')}</ul>`;
+      if (errors.length > 10) html += `<div>+${errors.length - 10} lainnya…</div>`;
+    }
+    html += `</div>`;
+    setHtml('#bo-preview', html);
+    if (submitBtn) submitBtn.disabled = !window._bulkOrderParsed.length;
+  } catch (e) {
+    setHtml('#bo-preview', `<div class="rounded-lg p-3 text-xs" style="background:#fee2e2;color:#991b1b">Gagal memeriksa ke server: ${esc(e.message)}</div>`);
+  } finally {
+    if (previewBtn) { previewBtn.disabled = false; previewBtn.innerHTML = 'Pratinjau'; }
+  }
+}
+async function _submitBulkOrderImpl() {
+  if (!window._bulkOrderParsed) await previewBulkOrder();
+  const orders = (window._bulkOrderParsed || []).slice(0, 100);
+  if (!orders.length) return toast('Tidak ada order valid utk dikirim - klik Pratinjau dulu', 'error');
+  if (!confirm(`Kirim ${orders.length} order sekaligus?`)) return;
+  const btn = $('#bo-submitBtn');
+  if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-circle-notch spin mr-1"></i>Mengirim…'; }
+  const t0 = performance.now();
+  try {
+    const r = await api('sales.bulk-create', {
+      orders: orders.map(o => ({
+        ref: o.ref, customer_nama: o.customer_nama, channel: o.channel, status_bayar: o.status_bayar,
+        items: o.items.map(i => ({ product_id: i.product_id, qty: i.qty, harga: i.harga })),
+      })),
+    }, { cache:false, timeout: 60000 });
+    const elapsed = ((performance.now() - t0) / 1000).toFixed(1);
+    toast(`${r.created} order berhasil dibuat dalam ${elapsed} detik${r.errors && r.errors.length ? ` · ${r.errors.length} gagal` : ''}`);
+    let html = `<div class="rounded-lg p-3 text-xs" style="background:#d1fae5;color:#065f46"><b>${r.created}</b> dari ${r.total} order berhasil dibuat (${elapsed} detik).</div>`;
+    if (r.errors && r.errors.length) {
+      html += `<div class="rounded-lg p-3 text-xs mt-2" style="background:#fee2e2;color:#991b1b"><b>${r.errors.length}</b> order gagal:<ul class="list-disc pl-4 mt-1">${r.errors.slice(0, 15).map(e => `<li>${esc(e.ref || ('#' + (e.idx + 1)))}: ${esc(e.error)}</li>`).join('')}</ul></div>`;
+    }
+    setHtml('#bo-preview', html);
+    window._bulkOrderParsed = null;
+    invalidateCache('sales'); invalidateCache('products'); invalidatePage('sales'); invalidatePage('products'); invalidatePage('dashboard'); invalidatePage('inventory');
+    refreshCurrentPage();
+    if (!r.errors || !r.errors.length) { const ta = $('#bo-input'); if (ta) ta.value = ''; }
+    if (btn) { btn.innerHTML = 'Kirim Order'; btn.disabled = true; }
+  } catch (e) {
+    toast(e.message, 'error');
+    if (btn) { btn.disabled = false; btn.innerHTML = 'Kirim Order'; }
+  }
+}
+const submitBulkOrder = withLock('submitBulkOrder', _submitBulkOrderImpl);
+
 async function viewSale(id) {
   try {
     const d = await api('sales.get', { id }, { cache:false });
@@ -2891,8 +3524,8 @@ async function viewSale(id) {
         </div>
       </div>
       <div class="px-5 pt-4 no-print">
-        <div class="text-[10px] text-muted uppercase font-semibold mb-2">Alur Status</div>
-        <div class="mb-4 overflow-x-auto pb-1">${renderSalesFlowStepper(o.status_bayar || o.status)}</div>
+        <div class="text-[10px] text-muted uppercase font-semibold mb-2">Alur Proses</div>
+        <div class="mb-4 overflow-x-auto pb-1">${renderSalesProcessStepper(o.status)}</div>
       </div>
       <div class="p-5 pt-0">
         <div class="text-center mb-4"><div class="font-bold text-lg text-main">${esc(S.config.name)}</div><div class="text-xs text-muted">Invoice ${esc(o.nomor)}</div></div>
@@ -2900,7 +3533,8 @@ async function viewSale(id) {
           <div><span class="text-muted">Tanggal:</span> ${fmtDate(o.tanggal)}</div>
           <div><span class="text-muted">Customer:</span> ${esc(o.customer_nama || 'Walk-in')}</div>
           <div><span class="text-muted">Channel:</span> ${esc(o.channel || '-')}</div>
-          <div><span class="text-muted">Status:</span> ${statusBadge(o.status)}</div>
+          <div><span class="text-muted">Proses:</span> ${renderSalesProcessBadge(o.status)}</div>
+          <div class="col-span-2"><span class="text-muted">Pembayaran:</span> ${renderSalesPaymentBadge(o.status_bayar)}</div>
         </div>
         <table class="w-full text-xs"><thead><tr class="border-b" style="border-color:var(--border)"><th class="text-left py-1.5 text-muted uppercase text-[10px]">Produk</th><th class="text-center py-1.5 text-muted uppercase text-[10px]">Qty</th><th class="text-right py-1.5 text-muted uppercase text-[10px]">Harga</th><th class="text-right py-1.5 text-muted uppercase text-[10px]">Subtotal</th></tr></thead>
         <tbody>${items.map(i => `<tr class="border-b" style="border-color:var(--border-soft)"><td class="py-1.5 text-main">${esc(i.nama)}</td><td class="py-1.5 text-center">${i.qty}</td><td class="py-1.5 text-right">${rp(i.harga)}</td><td class="py-1.5 text-right">${rp(i.subtotal)}</td></tr>`).join('')}</tbody></table>
@@ -2914,9 +3548,17 @@ async function viewSale(id) {
           </div>` : ''}
           ${o.poin_earned ? `<div class="text-amber-600 mt-1"><i class="fa-solid fa-star mr-1"></i>+${o.poin_earned} poin loyalty</div>` : ''}
         </div>
-        ${hasPerm('edit','sales') ? `<div class="mt-4 no-print"><label class="block text-[11px] font-medium text-soft mb-1">Update Status</label>
-          <div class="flex gap-2"><select id="sv-status" class="flex-1 px-3 py-2 border rounded-lg text-sm">${SALES_FLOW.map(s => `<option value="${s.key}" ${(o.status_bayar || o.status) === s.key ? 'selected' : ''}>${s.label}</option>`).join('')}<option value="cancelled" ${o.status === 'cancelled' ? 'selected' : ''}>Dibatalkan</option><option value="refund" ${o.status === 'refund' ? 'selected' : ''}>Refund</option></select>
-          <button onclick="updSaleStatus('${o.id}')" class="px-3 py-2 rounded-lg text-white text-sm" style="background:var(--primary)">Update</button></div>
+        ${hasPerm('edit','sales') ? `<div class="mt-4 no-print space-y-3">
+          <div><label class="block text-[11px] font-medium text-soft mb-1">Ubah Status Proses</label>
+            <div class="flex gap-2"><select id="sv-status" class="flex-1 px-3 py-2 border rounded-lg text-sm">${SALES_PROCESS_STATUS.map(s => `<option value="${s.key}" ${o.status === s.key ? 'selected' : ''}>${s.label}</option>`).join('')}<option value="cancelled" ${o.status === 'cancelled' ? 'selected' : ''}>Dibatalkan</option><option value="refund" ${o.status === 'refund' ? 'selected' : ''}>Refund</option></select>
+            <button onclick="updSaleStatus('${o.id}')" class="px-3 py-2 rounded-lg text-white text-sm" style="background:var(--primary)">Update</button></div>
+          </div>
+          ${o.status !== 'cancelled' && o.status !== 'refund' ? `<div>
+            <label class="block text-[11px] font-medium text-soft mb-1">Status Pembayaran ${o.channel === 'offline' ? '' : '<span class="text-muted font-normal">(mis. COD - tandai lunas setelah kurir konfirmasi uang diterima)</span>'}</label>
+            ${o.status_bayar === 'paid'
+              ? `<button onclick="updSalePayment('${o.id}','pending')" class="w-full px-3 py-2 rounded-lg text-sm font-medium" style="background:#fef3c7;color:#92400e"><i class="fa-solid fa-rotate-left mr-1"></i>Tandai Belum Bayar</button>`
+              : `<button onclick="updSalePayment('${o.id}','paid')" class="w-full px-3 py-2 rounded-lg text-sm font-medium" style="background:#d1fae5;color:#065f46"><i class="fa-solid fa-money-check-dollar mr-1"></i>Tandai Lunas</button>`}
+          </div>` : ''}
         </div>` : ''}
       </div>
       <div class="flex justify-end gap-2 px-5 py-3 border-t no-print sticky bottom-0 bg-card" style="border-color:var(--border)"><button onclick="closeModal()" class="px-4 py-2 rounded-lg text-soft text-sm bg-soft">Tutup</button></div>
@@ -2928,7 +3570,20 @@ async function updSaleStatus(id) {
   const st = $('#sv-status')?.value; if (!st) return;
   try {
     await api('sales.update-status', { id, status: st }, { cache:false });
-    toast('Status diupdate'); invalidateCache('sales'); invalidatePage('sales'); invalidatePage('dashboard');
+    toast('Status proses diupdate'); invalidateCache('sales'); invalidatePage('sales'); invalidatePage('dashboard');
+    closeModal(); renderSales(true);
+  } catch (e) { toast(e.message, 'error'); }
+}
+// Aksi TERPISAH utk menandai lunas/belum-bayar dari dalam modal detail invoice - lihat
+// catatan di getPaymentToggleButton/quickTogglePayment soal kenapa ini dipisah dari
+// updSaleStatus (status proses) di atas.
+async function updSalePayment(id, target) {
+  const label = target === 'paid' ? 'Lunas' : 'Belum Bayar';
+  if (!confirm(`Tandai transaksi ini sebagai "${label}"?`)) return;
+  try {
+    await api(target === 'paid' ? 'sales.mark-paid' : 'sales.mark-unpaid', { id }, { cache:false });
+    toast(`Ditandai ${label}`);
+    invalidateCache('sales'); invalidatePage('sales'); invalidatePage('dashboard');
     closeModal(); renderSales(true);
   } catch (e) { toast(e.message, 'error'); }
 }
@@ -2958,12 +3613,16 @@ async function renderPurchases(force) {
     const r = await getPageData('purchases', force);
     const items = r.items || [];
     setText('#meta-purchases', `${items.length} dari ${r.total || items.length} PO`);
-    const totalAmount = items.reduce((s, o) => s + Number(o.total||0), 0);
-    const totalDibayar = items.reduce((s, o) => s + Number(o.jumlah_dibayar||0), 0);
-    const totalSisa = items.reduce((s, o) => s + Number(o.sisa_hutang||0), 0);
-    const received = items.filter(o => o.status === 'received').length;
+    // FIX v9.0 [poin 7]: pakai r._statsItems (agregat SELURUH data terfilter) - `items`
+    // sekarang cuma 1 halaman (25 baris), memakainya di sini akan membuat kartu ringkasan
+    // salah/understated begitu data lebih dari 1 halaman.
+    const statsItems = r._statsItems || items;
+    const totalAmount = statsItems.reduce((s, o) => s + Number(o.total||0), 0);
+    const totalDibayar = statsItems.reduce((s, o) => s + Number(o.jumlah_dibayar||0), 0);
+    const totalSisa = statsItems.reduce((s, o) => s + Number(o.sisa_hutang||0), 0);
+    const received = statsItems.filter(o => o.status === 'received').length;
     setHtml('#stats-purchases', renderStatsBar([
-      { label:'Total PO', value: items.length, color:'var(--primary)' },
+      { label:'Total PO', value: r.total ?? statsItems.length, color:'var(--primary)' },
       { label:'Nilai Total', value: rp(totalAmount) },
       { label:'Sudah Dibayar', value: rp(totalDibayar), color:'var(--success)' },
       { label:'Sisa Hutang', value: rp(totalSisa), color:'var(--danger)' },
@@ -2972,7 +3631,7 @@ async function renderPurchases(force) {
     updateFilterBadge('purchases');
     if (!items.length) {
       const f = getFilterState('purchases');
-      const isFiltered = f.search || f.status || f.dateFrom || f.dateTo;
+      const isFiltered = f.search || f.status || f.dateFrom || f.dateTo || Object.values(f.extra||{}).some(v => v);
       setHtml('#poList', isFiltered
         ? `<div class="text-center py-12"><i class="fa-solid fa-filter text-3xl text-muted mb-3 opacity-40"></i><div class="font-semibold text-sm text-main mb-1">Tidak ada PO cocok</div><button onclick="resetFilters('purchases');renderPurchases(true)" class="px-4 py-2 rounded-lg text-white text-sm mt-3" style="background:var(--primary)">Reset Filter</button></div>`
         : emptyState('fa-file-invoice', 'Belum ada pembelian', hasPerm('create','purchases') ? 'PO Baru' : null, 'openPOForm()'));
@@ -3022,7 +3681,7 @@ async function renderPurchases(force) {
         </tr>`;
       }).join('')}</tbody>
     </table></div>
-    <div class="text-xs text-muted mt-3">Menampilkan <b class="text-main">${items.length}</b> dari <b class="text-main">${r.total || items.length}</b> PO</div>`);
+    ${renderPager('purchases', r)}`);
   } catch (e) { setHtml('#poList', `<div class="rounded-lg p-3 text-sm" style="background:#fee2e2;color:#991b1b">${esc(e.message)}</div>`); }
 }
 async function delPurchase(id) {
@@ -3045,6 +3704,7 @@ async function openReceiveForm(id) {
     const o = d.purchase, items = d.items || [];
     if (o.status === 'received') return toast('PO ini sudah diterima penuh', 'warn');
     if (o.status === 'cancelled') return toast('PO ini sudah dibatalkan', 'warn');
+    const canSeeCost = canViewCost();
     const rows = items.map(it => {
       const already = Number(it.qty_diterima) || 0, ordered = Number(it.qty) || 0;
       return Object.assign({}, it, { already, ordered, sisa: Math.max(0, ordered - already) });
@@ -3057,7 +3717,7 @@ async function openReceiveForm(id) {
         <button onclick="closeModal()" class="w-8 h-8 rounded-lg text-muted bg-soft flex items-center justify-center"><i class="fa-solid fa-times"></i></button>
       </div>
       <div class="p-5">
-        <div class="text-[11px] text-muted mb-3">Isi qty yang <b class="text-main">benar-benar diterima secara fisik</b> per item — boleh kurang dari pesanan (diterima sebagian, sisanya bisa dilengkapi lain waktu) atau lebih.</div>
+        <div class="text-[11px] text-muted mb-3">Isi qty yang <b class="text-main">benar-benar diterima secara fisik</b> per item — boleh kurang dari pesanan (diterima sebagian, sisanya bisa dilengkapi lain waktu) atau lebih. Jumlah yang harus dibayar ke supplier akan mengikuti qty yang diterima di sini, bukan qty pesanan awal.</div>
         <div class="border rounded-lg overflow-hidden" style="border-color:var(--border)">
           <table class="w-full text-xs"><thead class="bg-soft"><tr>
             <th class="text-left py-2 px-2 font-semibold text-soft uppercase text-[10px]">Produk</th>
@@ -3066,12 +3726,13 @@ async function openReceiveForm(id) {
             <th class="text-right py-2 px-2 font-semibold text-soft uppercase text-[10px] w-24">Terima Sekarang</th>
           </tr></thead>
           <tbody>${rows.map(it => `<tr class="border-t" style="border-color:var(--border-soft)">
-            <td class="py-2 px-2"><div class="font-medium text-main">${esc(it.nama)}</div><div class="text-[10px] text-muted">${esc(it.sku || '')}</div></td>
+            <td class="py-2 px-2"><div class="font-medium text-main">${esc(it.nama)}</div><div class="text-[10px] text-muted">${esc(it.sku || '')}${canSeeCost ? ` · @${rp(it.harga)}` : ''}</div></td>
             <td class="py-2 px-2 text-right">${it.ordered}</td>
             <td class="py-2 px-2 text-right text-muted">${it.already}</td>
-            <td class="py-2 px-2 text-right"><input type="number" min="0" step="1" value="${it.sisa}" data-item-id="${it.id}" class="recv-qty w-20 px-1.5 py-1 border rounded text-right text-xs"></td>
+            <td class="py-2 px-2 text-right"><input type="number" min="0" step="1" value="${it.sisa}" data-item-id="${it.id}" data-harga="${Number(it.harga) || 0}" oninput="updReceiveTotal()" class="recv-qty w-20 px-1.5 py-1 border rounded text-right text-xs"></td>
           </tr>`).join('')}</tbody></table>
         </div>
+        ${canSeeCost ? `<div class="flex justify-between items-center mt-3 px-1"><span class="text-xs text-muted">Total sesuai qty diterima (sebelum diskon/pajak PO)</span><span id="recvTotalPreview" class="text-sm font-bold text-main">Rp 0</span></div>` : ''}
       </div>
       <div class="flex justify-end gap-2 px-5 py-4 border-t bg-soft" style="border-color:var(--border)">
         <button onclick="closeModal()" class="px-4 py-2 rounded-lg text-soft text-sm bg-card">Batal</button>
@@ -3079,18 +3740,26 @@ async function openReceiveForm(id) {
       </div>
     </div>`;
     const root = $('#modalRoot'); if (root) { root.innerHTML = ''; root.appendChild(m); }
+    updReceiveTotal();
   } catch (e) { toast(e.message, 'error'); }
 }
-async function submitReceive(purchaseId) {
+function updReceiveTotal() {
+  const el = $('#recvTotalPreview'); if (!el) return;
+  let total = 0;
+  document.querySelectorAll('.recv-qty').forEach(inp => { total += (Number(inp.value) || 0) * (Number(inp.dataset.harga) || 0); });
+  el.textContent = rp(total);
+}
+async function _submitReceiveImpl(purchaseId) {
   const inputs = document.querySelectorAll('.recv-qty');
   const items = Array.from(inputs).map(el => ({ id: el.dataset.itemId, qty_diterima: Number(el.value) || 0 })).filter(x => x.qty_diterima > 0);
   if (!items.length) return toast('Isi minimal 1 qty penerimaan', 'error');
   if (!confirm(`Konfirmasi terima ${items.length} item? Stok akan bertambah sesuai qty yang diisi.`)) return;
   const btn = $('#recvSubmitBtn');
-  if (btn) { if (btn.disabled) return; btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-circle-notch spin mr-1"></i>Memproses...'; }
+  if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-circle-notch spin mr-1"></i>Memproses...'; }
   try {
     const r = await api('purchases.receive', { id: purchaseId, items }, { cache:false });
-    toast(r.status === 'received' ? `PO diterima penuh (${r.items_received} item)` : `Diterima sebagian (${r.items_received} item) — sisa qty masih terbuka`);
+    const totalMsg = r.total_diterima ? ` · Total sesuai penerimaan: ${rp(r.total_diterima)}` : '';
+    toast((r.status === 'received' ? `PO diterima penuh (${r.items_received} item)` : `Diterima sebagian (${r.items_received} item) — sisa qty masih terbuka`) + totalMsg);
     closeModal();
     invalidateCache('purchases'); invalidateCache('products'); invalidateCache('inventory');
     invalidatePage('purchases'); invalidatePage('products'); invalidatePage('inventory'); invalidatePage('dashboard');
@@ -3100,6 +3769,7 @@ async function submitReceive(purchaseId) {
     if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-box-open mr-1"></i>Konfirmasi Terima'; }
   }
 }
+const submitReceive = withLock('submitReceive', _submitReceiveImpl);
 
 async function viewPurchase(id) {
   try {
@@ -3138,8 +3808,9 @@ async function viewPurchase(id) {
         </div>
         <div class="rounded-lg p-3" style="background:var(--bg-soft)">
           <div class="grid grid-cols-2 gap-2 text-xs">
-            <div><div class="text-muted">Total PO</div><div class="font-bold text-main">${rp(o.total)}</div></div>
+            <div><div class="text-muted">Total PO${Number(o.total_diterima) > 0 && Number(o.total_diterima) !== Number(o.total) ? ' (dipesan)' : ''}</div><div class="font-bold text-main">${rp(o.total)}</div></div>
             <div><div class="text-muted">Sudah Dibayar</div><div class="font-bold" style="color:var(--success)">${rp(o.jumlah_dibayar || 0)}</div></div>
+            ${Number(o.total_diterima) > 0 && Number(o.total_diterima) !== Number(o.total) ? `<div class="col-span-2"><div class="text-muted">Total Sesuai Diterima</div><div class="font-bold" style="color:var(--primary)">${rp(o.total_diterima)}</div></div>` : ''}
             <div class="col-span-2 border-t pt-2 mt-1" style="border-color:var(--border)">
               <div class="text-muted">Sisa Hutang</div>
               <div class="text-base font-bold" style="color:${Number(o.sisa_hutang) > 0 ? 'var(--danger)' : 'var(--success)'}">${rp(o.sisa_hutang || 0)}</div>
@@ -3205,11 +3876,12 @@ async function openPaymentPurchase(id) {
   } catch (e) { toast(e.message, 'error'); }
 }
 
-async function submitPurchasePayment(id) {
+async function _submitPurchasePaymentImpl(id) {
   const f = $('#payForm'); if (!f) return;
+  const btn = $('#paySubmitBtn');
+  if (btn && btn.disabled) return;
   const jumlah = Number(f.elements.jumlah.value || 0);
   if (jumlah <= 0) return toast('Jumlah harus > 0', 'error');
-  const btn = $('#paySubmitBtn');
   if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-circle-notch spin mr-1"></i>...'; }
   try {
     const r = await api('purchases.pay', {
@@ -3228,6 +3900,7 @@ async function submitPurchasePayment(id) {
     if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-money-bill mr-1"></i>Bayar'; }
   }
 }
+const submitPurchasePayment = withLock('submitPurchasePayment', _submitPurchasePaymentImpl);
 
 async function openPOForm() {
   try {
@@ -3295,10 +3968,11 @@ function renderPOItems() {
     <td class="py-2 px-3 text-right"><button onclick="window._pItems.splice(${i},1);renderPOItems()" class="w-6 h-6 rounded text-red-400"><i class="fa-solid fa-times text-[10px]"></i></button></td>
   </tr>`).join('');
 }
-async function submitPO(statusBayar) {
+async function _submitPOImpl(statusBayar) {
   statusBayar = statusBayar || 'unpaid';
   if (!window._pItems || !window._pItems.length) return toast('Tambahkan minimal 1 produk', 'error');
   const btns = [$('#p-sub'), $('#p-sub-paid')].filter(Boolean);
+  if (btns.some(b => b.disabled)) return;
   btns.forEach(b => { b.disabled = true; });
   const s = $('#p-sup');
   try {
@@ -3319,6 +3993,7 @@ async function submitPO(statusBayar) {
     btns.forEach(b => { b.disabled = false; });
   }
 }
+const submitPO = withLock('submitPO', _submitPOImpl);
 
 /* ---------- INVENTORY ---------- */
 async function renderInventory(force) {
@@ -3391,12 +4066,12 @@ async function openAdjustForm() {
     const root = $('#modalRoot'); if (root) { root.innerHTML = ''; root.appendChild(m); }
   } catch (e) { toast(e.message, 'error'); }
 }
-async function submitAdjust() {
+async function _submitAdjustImpl() {
   const f = $('#adjForm'); if (!f) return;
   const pid = f.elements.product_id.value, qty = Number(f.elements.qty.value), ket = f.elements.keterangan.value;
   if (!pid || !qty) return toast('Pilih produk & isi qty', 'error');
   const btn = $('#adjSubmitBtn');
-  if (btn) { if (btn.disabled) return; btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-circle-notch spin mr-1"></i>...'; }
+  if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-circle-notch spin mr-1"></i>...'; }
   try {
     await api('inventory.adjust', { product_id: pid, qty, keterangan: ket }, { cache:false });
     toast('Stok disesuaikan');
@@ -3408,6 +4083,7 @@ async function submitAdjust() {
     if (btn) { btn.disabled = false; btn.innerHTML = 'Simpan'; }
   }
 }
+const submitAdjust = withLock('submitAdjust', _submitAdjustImpl);
 async function openTransferForm() {
   try {
     const [pr, wr] = await Promise.all([
@@ -3460,12 +4136,12 @@ async function updateTransferStokInfo() {
   } catch (e) { info.textContent = ''; }
 }
 
-async function submitTransfer() {
+async function _submitTransferImpl() {
   const f = $('#trfForm'); if (!f) return;
   const d = {}; new FormData(f).forEach((v,k) => d[k] = k === 'qty' ? Number(v) : v);
   if (!d.product_id || !d.qty || d.dari === d.ke) return toast('Data tidak valid', 'error');
   const btn = $('#trfSubmitBtn');
-  if (btn) { if (btn.disabled) return; btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-circle-notch spin mr-1"></i>...'; }
+  if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-circle-notch spin mr-1"></i>...'; }
   try {
     const r = await api('inventory.transfer', d, { cache:false });
     toast(`Transfer ${r.nomor} berhasil`);
@@ -3477,6 +4153,7 @@ async function submitTransfer() {
     if (btn) { btn.disabled = false; btn.innerHTML = 'Transfer'; }
   }
 }
+const submitTransfer = withLock('submitTransfer', _submitTransferImpl);
 
 /* ---------- PRODUCT BUNDLES ---------- */
 async function renderBundles(force) {
@@ -3586,7 +4263,7 @@ function renderBundleComponents() {
   const est = $('#bnd-hpp-est'); if (est) est.textContent = rp(hppEst);
 }
 
-async function submitBundle() {
+async function _submitBundleImpl() {
   const f = $('#bndForm'); if (!f) return;
   const d = {}; new FormData(f).forEach((v, k) => d[k] = v);
   if (!d.nama) return toast('Nama bundle wajib', 'error');
@@ -3596,7 +4273,7 @@ async function submitBundle() {
   const isEdit = !!d.id;
   if (!isEdit) delete d.id;
   const btn = $('#bndSubmitBtn');
-  if (btn) { if (btn.disabled) return; btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-circle-notch spin mr-1"></i>...'; }
+  if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-circle-notch spin mr-1"></i>...'; }
   try {
     await api(isEdit ? 'product_bundles.update' : 'product_bundles.create', d, { cache:false });
     toast('Bundle disimpan');
@@ -3610,6 +4287,7 @@ async function submitBundle() {
     if (btn) { btn.disabled = false; btn.innerHTML = 'Simpan'; }
   }
 }
+const submitBundle = withLock('submitBundle', _submitBundleImpl);
 
 async function delBundle(id) {
   if (!confirm('Hapus bundle ini? Produk komponennya tidak ikut terhapus.')) return;
@@ -3657,65 +4335,280 @@ async function showRestockRecommend() {
 }
 
 /* ---------- STOCK OPNAME (hitung fisik) ---------- */
+// P0 UI: filter Stok Opname (periode KPI/riwayat + gudang) kini memakai filter bar & drawer KANAN
+// yang sama dengan halaman lain - tidak ada lagi input tanggal & chip gudang yang tersebar di halaman.
+function opnameFilterOpts() {
+  return { noSearch:true, extraFields:[{ key:'warehouse_ids', label:'Gudang yang diopname (kosong = semua gudang)', type:'multiselect',
+    options:(window._opnameWarehouses || []).map(w => ({ value:String(w.id), label:w.nama })) }] };
+}
+function getOpnameWarehouseIds() {
+  const v = getFilterState('stockopname').extra.warehouse_ids;
+  return Array.isArray(v) ? v.map(String) : [];
+}
+function opnameErrBox(msg, retryFn) {
+  return `<div class="rounded-lg p-3 text-sm flex items-center justify-between gap-3" style="background:#fee2e2;color:#991b1b"><span>${esc(msg)}</span><button type="button" onclick="${retryFn}()" class="px-3 py-1 rounded-lg text-xs font-medium flex-shrink-0" style="background:#fff;color:#991b1b">Coba lagi</button></div>`;
+}
+function renderOpnameWhSummary() {
+  const box = $('#opnameWhSummary'); if (!box) return;
+  const wh = window._opnameWarehouses || [], ids = getOpnameWarehouseIds();
+  if (!wh.length) { box.textContent = 'Belum ada data gudang — lihat menu Outlet & Gudang.'; return; }
+  box.textContent = ids.length ? 'Gudang: ' + wh.filter(w => ids.includes(String(w.id))).map(w => w.nama).join(', ') : 'Gudang: semua gudang';
+}
+function refreshOpnameView() {
+  renderOpnameWhSummary(); loadOpnameHistory(); loadOpnameKpi();
+  if (window._opnamePreviewItems) loadOpnamePreview();
+}
 async function renderStockOpname() {
   const c = $('#content'); if (!c) return;
   c.innerHTML = `${renderBreadcrumb('stockopname')}
+    ${renderFilterBar('stockopname', opnameFilterOpts())}
     <div class="rounded-xl border p-4 bg-card mb-4" style="border-color:var(--border)">
-      <div class="flex flex-wrap items-end gap-3">
-        <div><label class="block text-[11px] font-medium text-soft mb-1">Gudang (opsional)</label>
-          <select id="opn-wh" class="px-3 py-2 border rounded-lg text-sm min-w-[180px]"><option value="">Semua gudang</option></select></div>
-        <button onclick="startOpname()" class="px-4 py-2 rounded-lg text-white text-sm font-medium" style="background:var(--primary)"><i class="fa-solid fa-clipboard-list mr-1"></i>Mulai Hitung Fisik</button>
-        <span class="text-[11px] text-muted">Isi kolom "Stok Fisik" hanya untuk produk yang jumlahnya berbeda — sisanya otomatis dianggap sama.</span>
+      <div class="flex items-center flex-wrap gap-3">
+        <button onclick="loadOpnamePreview()" class="px-4 py-2 rounded-lg text-white text-sm font-medium" style="background:var(--primary)"><i class="fa-solid fa-list-check mr-1"></i>Lihat Preview SKU</button>
+        <span class="text-xs font-medium text-main" id="opnameWhSummary">Memuat daftar gudang…</span>
       </div>
+      <div class="text-[11px] text-muted mt-2">Tinjau dulu SKU yang akan dihitung & pilih mana yang diikutkan sebelum mulai hitung fisik. Satu sesi bisa mencakup beberapa gudang. Atur gudang & periode lewat tombol Filter.</div>
     </div>
     <div id="opnameArea"></div>
     <div class="rounded-xl border bg-card mt-4" style="border-color:var(--border)">
+      <div class="flex items-center justify-between p-4 border-b flex-wrap gap-2" style="border-color:var(--border)">
+        <h2 class="font-semibold text-sm text-main"><i class="fa-solid fa-chart-line mr-1 text-muted"></i>KPI Produktivitas Opname</h2>
+        <div class="flex items-center gap-2 text-xs">
+          <button onclick="loadOpnameKpi()" class="w-7 h-7 rounded-lg text-soft bg-soft flex items-center justify-center" data-tip="Refresh"><i class="fa-solid fa-rotate text-xs"></i></button>
+        </div>
+      </div>
+      <div id="opnameKpiStats" class="p-4 pb-0"></div>
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 p-4">
+        <div><div class="text-[11px] font-semibold text-soft uppercase mb-2">Per Petugas</div><div id="opnameKpiPetugas">${skeletonRows(3)}</div></div>
+        <div><div class="text-[11px] font-semibold text-soft uppercase mb-2">Per Toko / Gudang</div><div id="opnameKpiGudang">${skeletonRows(3)}</div></div>
+      </div>
+    </div>
+    <div class="rounded-xl border bg-card mt-4" style="border-color:var(--border)">
       <div class="flex items-center justify-between p-4 border-b" style="border-color:var(--border)">
-        <h2 class="font-semibold text-sm text-main"><i class="fa-solid fa-clock-rotate-left mr-1 text-muted"></i>Riwayat Opname</h2>
+        <h2 class="font-semibold text-sm text-main"><i class="fa-solid fa-clock-rotate-left mr-1 text-muted"></i>Riwayat Sesi Opname</h2>
         <button onclick="loadOpnameHistory()" class="w-8 h-8 rounded-lg text-soft bg-soft flex items-center justify-center" data-tip="Refresh"><i class="fa-solid fa-rotate text-xs"></i></button>
       </div>
       <div id="opnameHistory" class="p-4">${skeletonRows(3)}</div>
     </div>`;
   try {
-    const w = await api('warehouses.list', {}, { ttl: 60000 });
-    const sel = $('#opn-wh');
-    if (sel) (w.items || []).forEach(x => sel.insertAdjacentHTML('beforeend', `<option value="${x.id}">${esc(x.nama)}</option>`));
-  } catch (_) {}
+    const w = await api('warehouses.list', { limit:100 }, { ttl: 60000 });
+    window._opnameWarehouses = w.items || [];
+    window['_filterOpts_stockopname'] = opnameFilterOpts();
+    renderOpnameWhSummary();
+  } catch (e) { setHtml('#opnameWhSummary', `<span style="color:var(--danger)">Gagal memuat daftar gudang: ${esc(e.message)} · <a href="#" class="underline" onclick="renderStockOpname();return false">Coba lagi</a></span>`); }
   loadOpnameHistory();
+  loadOpnameKpi();
+}
+function fmtDuration(sec) {
+  sec = Math.max(0, Number(sec) || 0);
+  if (sec < 60) return sec + ' detik';
+  const m = Math.floor(sec / 60), s = Math.round(sec % 60);
+  if (m < 60) return `${m} menit${s ? ' ' + s + ' detik' : ''}`;
+  const h = Math.floor(m / 60), rm = m % 60;
+  return `${h} jam ${rm} menit`;
+}
+// v9.0 [poin 4]: agregat KPI produktivitas petugas opname (durasi, total SKU, total pcs,
+// % akurasi) per petugas & per toko/gudang, dari stock_opname.kpi-summary (dihitung
+// backend dari stock_opname_sessions - lihat stockOpnameKpiSummary di Code.gs).
+async function loadOpnameKpi() {
+  const _f = getFilterState('stockopname'); const from = _f.dateFrom || '', to = _f.dateTo || '';
+  try {
+    const r = await api('stock_opname.kpi-summary', { date_from: from, date_to: to }, { cache:false });
+    const ov = r.overall || {};
+    setHtml('#opnameKpiStats', renderStatsBar([
+      { label:'Total Sesi', value: ov.sesi_count || 0, color:'var(--primary)' },
+      { label:'Total SKU Dihitung', value: ov.total_sku || 0 },
+      { label:'Total Pcs Dihitung', value: ov.total_pcs || 0 },
+      { label:'Rata-rata Durasi', value: fmtDuration(ov.avg_durasi_detik) },
+      { label:'Rata-rata Akurasi', value: (ov.avg_akurasi_pct ?? 100) + '%', color: (ov.avg_akurasi_pct ?? 100) >= 95 ? 'var(--success)' : 'var(--warn)' },
+    ]));
+    const petugasRows = r.petugas || [];
+    setHtml('#opnameKpiPetugas', petugasRows.length ? `<div class="overflow-x-auto"><table class="w-full text-xs">
+      <thead><tr class="border-b" style="border-color:var(--border)">
+        <th class="text-left py-1.5 px-2 text-muted uppercase text-[10px]">Petugas</th>
+        <th class="text-center py-1.5 px-2 text-muted uppercase text-[10px]">Sesi</th>
+        <th class="text-center py-1.5 px-2 text-muted uppercase text-[10px]">SKU</th>
+        <th class="text-center py-1.5 px-2 text-muted uppercase text-[10px]">Pcs</th>
+        <th class="text-center py-1.5 px-2 text-muted uppercase text-[10px]">Durasi</th>
+        <th class="text-center py-1.5 px-2 text-muted uppercase text-[10px]">Akurasi</th>
+      </tr></thead>
+      <tbody>${petugasRows.map(p => `<tr class="border-b" style="border-color:var(--border-soft)">
+        <td class="py-1.5 px-2 font-medium text-main">${esc(p.petugas_nama || '-')}</td>
+        <td class="py-1.5 px-2 text-center">${p.sesi_count}</td>
+        <td class="py-1.5 px-2 text-center">${p.total_sku}</td>
+        <td class="py-1.5 px-2 text-center">${p.total_pcs}</td>
+        <td class="py-1.5 px-2 text-center text-muted">${fmtDuration(p.avg_durasi_detik)}</td>
+        <td class="py-1.5 px-2 text-center font-semibold" style="color:${p.avg_akurasi_pct >= 95 ? 'var(--success)' : 'var(--warn)'}">${p.avg_akurasi_pct}%</td>
+      </tr>`).join('')}</tbody></table></div>` : emptyState('fa-user-clock', 'Belum ada data'));
+    const whRows = r.warehouse || [];
+    setHtml('#opnameKpiGudang', whRows.length ? `<div class="overflow-x-auto"><table class="w-full text-xs">
+      <thead><tr class="border-b" style="border-color:var(--border)">
+        <th class="text-left py-1.5 px-2 text-muted uppercase text-[10px]">Gudang/Toko</th>
+        <th class="text-center py-1.5 px-2 text-muted uppercase text-[10px]">Sesi</th>
+        <th class="text-center py-1.5 px-2 text-muted uppercase text-[10px]">SKU</th>
+        <th class="text-center py-1.5 px-2 text-muted uppercase text-[10px]">Pcs</th>
+        <th class="text-center py-1.5 px-2 text-muted uppercase text-[10px]">Akurasi</th>
+      </tr></thead>
+      <tbody>${whRows.map(w => `<tr class="border-b" style="border-color:var(--border-soft)">
+        <td class="py-1.5 px-2 font-medium text-main">${esc(w.warehouse_nama || '-')}</td>
+        <td class="py-1.5 px-2 text-center">${w.sesi_count}</td>
+        <td class="py-1.5 px-2 text-center">${w.total_sku}</td>
+        <td class="py-1.5 px-2 text-center">${w.total_pcs}</td>
+        <td class="py-1.5 px-2 text-center font-semibold" style="color:${w.avg_akurasi_pct >= 95 ? 'var(--success)' : 'var(--warn)'}">${w.avg_akurasi_pct}%</td>
+      </tr>`).join('')}</tbody></table></div>` : emptyState('fa-warehouse', 'Belum ada data'));
+  } catch (e) { setHtml('#opnameKpiStats', opnameErrBox(e.message, 'loadOpnameKpi')); setHtml('#opnameKpiPetugas', ''); setHtml('#opnameKpiGudang', ''); }
 }
 
-async function startOpname() {
-  const whId = $('#opn-wh')?.value || '';
-  const area = $('#opnameArea');
-  if (area) area.innerHTML = skeletonRows(5);
+// v6.6.0 [lanjutan poin 4]: layar PREVIEW & pilih SKU/gudang, sebelum mulai hitung fisik.
+// Alur baru: pilih gudang (boleh banyak / kosongkan utk semua) → Lihat Preview SKU →
+// tinjau & centang SKU mana yg mau diikutkan (default semua tercentang) → Lanjut ke Hitung
+// Fisik → baru dari situ stock_opname.start benar2 membuka sesi (lihat proceedOpnameCount).
+async function _loadOpnamePreviewImpl() {
+  setHtml('#opnameArea', skeletonRows(5));
+  const warehouseIds = getOpnameWarehouseIds();
   try {
-    const r = await api('stock_opname.start', { warehouse_id: whId }, { cache:false });
-    const items = r.items || [];
-    if (!items.length) { setHtml('#opnameArea', emptyState('fa-box-open', 'Tidak ada produk untuk dihitung')); return; }
-    window._opnameItems = items;
-    setHtml('#opnameArea', `
-      <div class="rounded-xl border bg-card overflow-hidden" style="border-color:var(--border)">
-        <div class="flex items-center justify-between p-3 border-b text-xs" style="border-color:var(--border)">
-          <span class="text-muted">${items.length} produk · <span id="opn-diff-count">0</span> berbeda</span>
-          <button id="opnameSubmitBtn" onclick="submitOpname('${esc(whId)}')" class="px-4 py-1.5 rounded-lg text-white text-xs font-medium" style="background:var(--success)"><i class="fa-solid fa-check mr-1"></i>Simpan Hasil Opname</button>
-        </div>
-        <div class="max-h-[440px] overflow-y-auto">
-          <table class="w-full text-xs"><thead><tr class="border-b sticky top-0 bg-card" style="border-color:var(--border)">
-            <th class="text-left py-2 px-3 font-semibold text-muted uppercase text-[10px]">Produk</th>
-            <th class="text-center py-2 px-3 font-semibold text-muted uppercase text-[10px] w-24">Stok Sistem</th>
-            <th class="text-center py-2 px-3 font-semibold text-muted uppercase text-[10px] w-28">Stok Fisik</th>
-            <th class="text-center py-2 px-3 font-semibold text-muted uppercase text-[10px] w-20">Selisih</th>
-          </tr></thead>
-          <tbody>${items.map((it, i) => `
-            <tr class="border-b" style="border-color:var(--border-soft)">
-              <td class="py-2 px-3"><div class="font-medium text-main">${esc(it.nama)}</div><div class="text-[10px] text-muted">${esc(it.sku)}</div></td>
-              <td class="text-center py-2 px-3 num text-muted">${it.stok_sistem}</td>
-              <td class="text-center py-2 px-3"><input type="number" data-i="${i}" value="${it.stok_sistem}" oninput="onOpnameInput(${i}, this.value)" class="w-20 px-2 py-1 border rounded-lg text-xs text-center"></td>
-              <td class="text-center py-2 px-3 font-bold" id="opn-diff-${i}">0</td>
-            </tr>`).join('')}</tbody></table>
-        </div>
-      </div>`);
-  } catch (e) { setHtml('#opnameArea', `<div class="rounded-lg p-3 text-sm" style="background:#fee2e2;color:#991b1b">${esc(e.message)}</div>`); }
+    const r = await api('stock_opname.preview', { warehouse_ids: warehouseIds }, { cache:false });
+    const items = (r.items || []).map((it, i) => Object.assign({ _idx: i, _selected: true }, it));
+    window._opnamePreviewItems = items;
+    renderOpnamePreviewUI(items, r.per_warehouse || []);
+  } catch (e) { setHtml('#opnameArea', opnameErrBox(e.message, 'loadOpnamePreview')); }
+}
+const loadOpnamePreview = withLock('loadOpnamePreview', _loadOpnamePreviewImpl);
+
+function renderOpnamePreviewUI(items, perWarehouse) {
+  if (!items.length) { setHtml('#opnameArea', emptyState('fa-box-open', 'Tidak ada produk yang cocok utk diopname')); return; }
+  const order = perWarehouse.length ? perWarehouse.map(w => w.warehouse_id || '__none__') : [...new Set(items.map(it => it.warehouse_id || '__none__'))];
+  const groups = {};
+  items.forEach(it => { const k = it.warehouse_id || '__none__'; (groups[k] = groups[k] || []).push(it); });
+  const labelOf = k => { const w = perWarehouse.find(x => (x.warehouse_id || '__none__') === k); return esc(w ? (w.warehouse_nama || 'Tanpa Gudang') : 'Tanpa Gudang'); };
+  const selCount = items.filter(x => x._selected).length;
+  setHtml('#opnameArea', `
+    <div class="rounded-xl border bg-card overflow-hidden" style="border-color:var(--border)">
+      <div class="p-3 border-b flex flex-wrap items-center gap-2" style="border-color:var(--border)">
+        <input id="opn-preview-q" type="text" placeholder="Cari SKU/nama produk…" oninput="filterOpnamePreviewRows(this.value)" class="flex-1 min-w-[160px] px-3 py-1.5 border rounded-lg text-xs">
+        <button type="button" onclick="toggleOpnameSelectAll(true)" class="px-2.5 py-1.5 rounded-lg text-xs bg-soft text-soft">Pilih Semua</button>
+        <button type="button" onclick="toggleOpnameSelectAll(false)" class="px-2.5 py-1.5 rounded-lg text-xs bg-soft text-soft">Batal Semua</button>
+      </div>
+      <div class="max-h-[420px] overflow-y-auto" id="opnamePreviewList">
+        ${order.filter(k => groups[k] && groups[k].length).map(k => `<div data-group="${k}">
+          <div class="opn-prev-group-header flex items-center gap-2 px-3 py-2 sticky top-0" style="background:var(--bg-soft)">
+            <label class="flex items-center gap-2 text-xs font-semibold text-main cursor-pointer flex-1">
+              <input type="checkbox" class="checkbox-perm" ${groups[k].every(x => x._selected) ? 'checked' : ''} onchange="toggleOpnameGroup('${k}', this.checked)">
+              ${labelOf(k)} <span class="text-muted font-normal">(${groups[k].length} SKU)</span>
+            </label>
+          </div>
+          ${groups[k].map(it => `
+            <label class="opn-prev-row flex items-center gap-3 px-3 py-2 border-b hover:bg-[var(--bg-soft)] cursor-pointer" style="border-color:var(--border-soft)" data-idx="${it._idx}" data-search="${esc((String(it.sku) + ' ' + String(it.nama)).toLowerCase())}">
+              <input type="checkbox" class="checkbox-perm flex-shrink-0" ${it._selected ? 'checked' : ''} onchange="toggleOpnameRow(${it._idx}, this.checked)">
+              <div class="flex-1 min-w-0"><div class="font-medium text-main text-xs truncate">${esc(it.nama)}</div><div class="text-[10px] text-muted">${esc(it.sku)} · stok sistem: ${it.stok_sistem}</div></div>
+            </label>`).join('')}
+        </div>`).join('')}
+      </div>
+      <div class="flex items-center justify-between p-3 border-t flex-wrap gap-2" style="border-color:var(--border)">
+        <span class="text-xs text-muted"><b id="opn-preview-selcount" class="text-main">${selCount}</b> dari ${items.length} SKU dipilih</span>
+        <button id="opnameProceedBtn" onclick="proceedOpnameCount()" class="px-4 py-2 rounded-lg text-white text-sm font-medium disabled:opacity-50" style="background:var(--primary)" ${selCount ? '' : 'disabled'}><i class="fa-solid fa-arrow-right mr-1"></i>Lanjut ke Hitung Fisik</button>
+      </div>
+    </div>`);
+}
+
+function filterOpnamePreviewRows(q) {
+  q = String(q || '').trim().toLowerCase();
+  document.querySelectorAll('#opnamePreviewList .opn-prev-row').forEach(row => {
+    row.style.display = (!q || (row.dataset.search || '').includes(q)) ? '' : 'none';
+  });
+  document.querySelectorAll('#opnamePreviewList [data-group]').forEach(g => {
+    const anyVisible = [...g.querySelectorAll('.opn-prev-row')].some(r => r.style.display !== 'none');
+    const header = g.querySelector('.opn-prev-group-header');
+    if (header) header.style.display = anyVisible ? '' : 'none';
+  });
+}
+function _updateOpnameGroupHeaderState(whKey) {
+  const items = (window._opnamePreviewItems || []).filter(x => (x.warehouse_id || '__none__') === whKey);
+  const cb = document.querySelector(`#opnamePreviewList [data-group="${whKey}"] .opn-prev-group-header input[type=checkbox]`);
+  if (!cb || !items.length) return;
+  const allOn = items.every(x => x._selected), noneOn = items.every(x => !x._selected);
+  cb.checked = allOn; cb.indeterminate = !allOn && !noneOn;
+}
+function _updateOpnamePreviewFooter() {
+  const items = window._opnamePreviewItems || [];
+  const n = items.filter(x => x._selected).length;
+  const el = $('#opn-preview-selcount'); if (el) el.textContent = n;
+  const btn = $('#opnameProceedBtn'); if (btn) btn.disabled = n === 0;
+}
+function toggleOpnameRow(idx, checked) {
+  const it = (window._opnamePreviewItems || [])[idx]; if (!it) return;
+  it._selected = !!checked;
+  _updateOpnameGroupHeaderState(it.warehouse_id || '__none__');
+  _updateOpnamePreviewFooter();
+}
+function toggleOpnameGroup(whKey, checked) {
+  (window._opnamePreviewItems || []).forEach(it => { if ((it.warehouse_id || '__none__') === whKey) it._selected = !!checked; });
+  document.querySelectorAll(`#opnamePreviewList [data-group="${whKey}"] .opn-prev-row input[type=checkbox]`).forEach(cb => cb.checked = !!checked);
+  _updateOpnamePreviewFooter();
+}
+function toggleOpnameSelectAll(checked) {
+  (window._opnamePreviewItems || []).forEach(it => it._selected = !!checked);
+  document.querySelectorAll('#opnamePreviewList input[type=checkbox]').forEach(cb => { cb.checked = !!checked; cb.indeterminate = false; });
+  _updateOpnamePreviewFooter();
+}
+
+async function _proceedOpnameCountImpl() {
+  const items = (window._opnamePreviewItems || []).filter(x => x._selected);
+  if (!items.length) return toast('Pilih minimal 1 SKU dulu', 'error');
+  const btn = $('#opnameProceedBtn');
+  if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-circle-notch spin mr-1"></i>Memulai…'; }
+  try {
+    const payload = items.map(it => ({ product_id: it.product_id, warehouse_id: it.warehouse_id || '' }));
+    const r = await api('stock_opname.start', { items: payload }, { cache:false });
+    // v9.0 [poin 4]: stock_opname.start membuka satu SESI (session_id) di backend -
+    // durasi hitung dicatat dari titik ini s/d submit, dipakai KPI produktivitas.
+    window._opnameSessionId = r.session_id;
+    window._opnameStartedAt = Date.now();
+    window._opnameItems = r.items || [];
+    renderOpnameCountingUI(r.nomor, window._opnameItems);
+  } catch (e) {
+    toast(e.message, 'error');
+    if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-arrow-right mr-1"></i>Lanjut ke Hitung Fisik'; }
+  }
+}
+const proceedOpnameCount = withLock('proceedOpnameCount', _proceedOpnameCountImpl);
+
+// Layar hitung fisik itu sendiri - dipanggil SETELAH sesi dibuka (proceedOpnameCount).
+// Kolom "Gudang" hanya muncul kalau sesi ini memang mencakup >1 gudang sekaligus.
+function renderOpnameCountingUI(nomor, items) {
+  if (!items.length) { setHtml('#opnameArea', emptyState('fa-box-open', 'Tidak ada produk untuk dihitung')); return; }
+  const multiWh = new Set(items.map(it => it.warehouse_id || '')).size > 1;
+  setHtml('#opnameArea', `
+    <div class="rounded-xl border bg-card overflow-hidden" style="border-color:var(--border)">
+      <div class="flex items-center justify-between p-3 border-b text-xs flex-wrap gap-2" style="border-color:var(--border)">
+        <span class="text-muted">${items.length} produk · <span id="opn-diff-count">0</span> berbeda · sesi <b class="text-main">${esc(nomor)}</b> · berjalan <span id="opn-timer" class="font-mono">00:00</span></span>
+        <button id="opnameSubmitBtn" onclick="submitOpname()" class="px-4 py-1.5 rounded-lg text-white text-xs font-medium" style="background:var(--success)"><i class="fa-solid fa-check mr-1"></i>Simpan Hasil Opname</button>
+      </div>
+      <div class="max-h-[440px] overflow-y-auto">
+        <table class="w-full text-xs"><thead><tr class="border-b sticky top-0 bg-card" style="border-color:var(--border)">
+          <th class="text-left py-2 px-3 font-semibold text-muted uppercase text-[10px]">Produk</th>
+          ${multiWh ? '<th class="text-left py-2 px-3 font-semibold text-muted uppercase text-[10px]">Gudang</th>' : ''}
+          <th class="text-center py-2 px-3 font-semibold text-muted uppercase text-[10px] w-24">Stok Sistem</th>
+          <th class="text-center py-2 px-3 font-semibold text-muted uppercase text-[10px] w-28">Stok Fisik</th>
+          <th class="text-center py-2 px-3 font-semibold text-muted uppercase text-[10px] w-20">Selisih</th>
+        </tr></thead>
+        <tbody>${items.map((it, i) => `
+          <tr class="border-b" style="border-color:var(--border-soft)">
+            <td class="py-2 px-3"><div class="font-medium text-main">${esc(it.nama)}</div><div class="text-[10px] text-muted">${esc(it.sku)}</div></td>
+            ${multiWh ? `<td class="py-2 px-3 text-muted">${esc(it.warehouse_nama || 'Tanpa Gudang')}</td>` : ''}
+            <td class="text-center py-2 px-3 num text-muted">${it.stok_sistem}</td>
+            <td class="text-center py-2 px-3"><input type="number" data-i="${i}" value="${it.stok_sistem}" oninput="onOpnameInput(${i}, this.value)" class="w-20 px-2 py-1 border rounded-lg text-xs text-center"></td>
+            <td class="text-center py-2 px-3 font-bold" id="opn-diff-${i}">0</td>
+          </tr>`).join('')}</tbody></table>
+      </div>
+    </div>`);
+  if (window._opnameTimerInt) clearInterval(window._opnameTimerInt);
+  window._opnameTimerInt = setInterval(() => {
+    const el = document.getElementById('opn-timer');
+    if (!el) { clearInterval(window._opnameTimerInt); return; }
+    const s = Math.floor((Date.now() - window._opnameStartedAt) / 1000);
+    el.textContent = String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0');
+  }, 1000);
 }
 
 function onOpnameInput(i, val) {
@@ -3729,55 +4622,111 @@ function onOpnameInput(i, val) {
   const dc = $('#opn-diff-count'); if (dc) dc.textContent = diffCount;
 }
 
-async function submitOpname(warehouseId) {
+async function _submitOpnameImpl() {
   const items = window._opnameItems || [];
   if (!items.length) return;
+  if (!window._opnameSessionId) return toast('Sesi opname tidak ditemukan - mulai ulang dari tombol "Mulai Hitung Fisik"', 'error');
   if (!confirm('Simpan hasil opname? Stok produk yang berbeda akan otomatis disesuaikan.')) return;
   const btn = $('#opnameSubmitBtn');
-  if (btn) { if (btn.disabled) return; btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-circle-notch spin mr-1"></i>Menyimpan...'; }
+  if (btn && btn.disabled) return;
+  if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-circle-notch spin mr-1"></i>Menyimpan...'; }
   try {
-    const payload = items.map(it => ({ product_id: it.product_id, stok_fisik: Number(it._fisik ?? it.stok_sistem) }));
-    const r = await api('stock_opname.submit', { warehouse_id: warehouseId, items: payload }, { cache:false });
-    toast(`Opname ${r.nomor} tersimpan · ${r.selisih_count} produk disesuaikan`);
+    // FIX v6.6.0: sertakan warehouse_id per item - sekarang jadi sumber kebenaran utama di
+    // stockOpnameSubmit (lihat Code.gs), krn 1 sesi bisa mencakup >1 gudang sekaligus.
+    const payload = items.map(it => ({ product_id: it.product_id, warehouse_id: it.warehouse_id || '', stok_fisik: Number(it._fisik ?? it.stok_sistem) }));
+    const r = await api('stock_opname.submit', { session_id: window._opnameSessionId, items: payload }, { cache:false });
+    if (window._opnameTimerInt) clearInterval(window._opnameTimerInt);
+    toast(`Opname ${r.nomor} tersimpan · ${r.selisih_count} produk disesuaikan · akurasi ${r.akurasi_pct}%`);
+    // Ringkasan KPI sesi ini LANGSUNG terlihat begitu selesai - durasi, total SKU, total
+    // pcs & akurasi - inilah data produktivitas yang diminta, tidak perlu buka halaman lain.
+    setHtml('#opnameArea', `<div class="rounded-xl border p-4 text-sm" style="border-color:var(--border);background:var(--bg-soft)">
+      <div class="font-semibold text-main mb-2"><i class="fa-solid fa-circle-check mr-1" style="color:var(--success)"></i>Sesi ${esc(r.nomor)} selesai</div>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
+        <div><div class="text-muted">Durasi</div><div class="font-bold text-main">${fmtDuration(r.durasi_detik)}</div></div>
+        <div><div class="text-muted">Total SKU</div><div class="font-bold text-main">${r.total_sku}</div></div>
+        <div><div class="text-muted">Total Pcs Fisik</div><div class="font-bold text-main">${r.total_pcs_fisik}</div></div>
+        <div><div class="text-muted">Akurasi</div><div class="font-bold" style="color:${r.akurasi_pct >= 95 ? 'var(--success)' : 'var(--warn)'}">${r.akurasi_pct}%</div></div>
+      </div>
+    </div>`);
     invalidateCache('inventory'); invalidateCache('products'); invalidatePage('inventory'); invalidatePage('products'); invalidatePage('dashboard');
-    window._opnameItems = null;
-    $('#opnameArea').innerHTML = '';
-    loadOpnameHistory();
+    window._opnameItems = null; window._opnameSessionId = null;
+    loadOpnameHistory(); loadOpnameKpi();
   } catch (e) {
     toast(e.message, 'error');
     if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-check mr-1"></i>Simpan Hasil Opname'; }
   }
 }
+const submitOpname = withLock('submitOpname', _submitOpnameImpl);
 
+// FIX v9.0 [poin 4 & 7]: langsung dari stock_opname_sessions (1 baris = 1 sesi, sudah
+// termasuk KPI-nya: durasi, total SKU, total pcs, akurasi) - tidak perlu lagi fetch
+// limit:500 baris PER PRODUK lalu dikelompokkan ulang di klien seperti sebelumnya.
 async function loadOpnameHistory() {
   const box = $('#opnameHistory'); if (!box) return;
   try {
-    const r = await api('stock_opname.list', { limit: 500 }, { cache:false });
+    const r = await api('stock_opname.session-list', { limit: 30, sort_by:'created_at', sort_dir:'desc', date_from:getFilterState('stockopname').dateFrom || '', date_to:getFilterState('stockopname').dateTo || '' }, { cache:false });
     const rows = r.items || [];
     if (!rows.length) { box.innerHTML = emptyState('fa-clipboard-check', 'Belum ada riwayat opname'); return; }
-    const grouped = {};
-    rows.forEach(x => {
-      if (!grouped[x.nomor]) grouped[x.nomor] = { nomor:x.nomor, tanggal:x.tanggal, petugas:x.petugas, total:0, diff:0 };
-      grouped[x.nomor].total++;
-      if (Number(x.selisih) !== 0) grouped[x.nomor].diff++;
-    });
-    const list = Object.values(grouped).sort((a,b) => String(b.tanggal).localeCompare(String(a.tanggal)));
     box.innerHTML = `<div class="overflow-x-auto"><table class="w-full text-sm">
       <thead><tr class="border-b" style="border-color:var(--border)">
         <th class="text-left py-2 px-3 text-[10px] font-semibold text-muted uppercase">Nomor</th>
-        <th class="text-left py-2 px-3 text-[10px] font-semibold text-muted uppercase">Tanggal</th>
+        <th class="text-left py-2 px-3 text-[10px] font-semibold text-muted uppercase hide-m">Tanggal</th>
         <th class="text-left py-2 px-3 text-[10px] font-semibold text-muted uppercase">Petugas</th>
-        <th class="text-center py-2 px-3 text-[10px] font-semibold text-muted uppercase">Produk Dicek</th>
-        <th class="text-center py-2 px-3 text-[10px] font-semibold text-muted uppercase">Ada Selisih</th>
+        <th class="text-left py-2 px-3 text-[10px] font-semibold text-muted uppercase hide-m">Toko/Gudang</th>
+        <th class="text-center py-2 px-3 text-[10px] font-semibold text-muted uppercase hide-m">Durasi</th>
+        <th class="text-center py-2 px-3 text-[10px] font-semibold text-muted uppercase">SKU</th>
+        <th class="text-center py-2 px-3 text-[10px] font-semibold text-muted uppercase hide-m">Pcs</th>
+        <th class="text-center py-2 px-3 text-[10px] font-semibold text-muted uppercase">Akurasi</th>
+        <th class="text-right py-2 px-3 w-16"></th>
       </tr></thead>
-      <tbody>${list.map(g => `<tr class="border-b hover:bg-[var(--bg-soft)]" style="border-color:var(--border-soft)">
+      <tbody>${rows.map(g => `<tr class="border-b hover:bg-[var(--bg-soft)]" style="border-color:var(--border-soft)">
         <td class="py-2 px-3 font-medium text-xs text-main">${esc(g.nomor)}</td>
-        <td class="py-2 px-3 text-xs text-muted">${fmtDate(g.tanggal)}</td>
-        <td class="py-2 px-3 text-xs text-soft">${esc(g.petugas || '-')}</td>
-        <td class="py-2 px-3 text-center text-xs">${g.total}</td>
-        <td class="py-2 px-3 text-center">${g.diff > 0 ? `<span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-amber-50 text-amber-700">${g.diff} produk</span>` : '<span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-700">Cocok semua</span>'}</td>
+        <td class="py-2 px-3 text-xs text-muted hide-m">${fmtDate(g.tanggal)}</td>
+        <td class="py-2 px-3 text-xs text-soft">${esc(g.petugas_nama || '-')}</td>
+        <td class="py-2 px-3 text-xs text-soft hide-m">${esc(g.warehouse_nama || 'Semua')}</td>
+        <td class="py-2 px-3 text-center text-xs text-muted hide-m">${String(g.status) === 'completed' ? fmtDuration(g.durasi_detik) : '-'}</td>
+        <td class="py-2 px-3 text-center text-xs">${g.total_sku || 0}</td>
+        <td class="py-2 px-3 text-center text-xs hide-m">${g.total_pcs_fisik || 0}</td>
+        <td class="py-2 px-3 text-center">${String(g.status) === 'completed' ? `<span class="px-2 py-0.5 rounded-full text-[10px] font-semibold" style="background:${Number(g.akurasi_pct) >= 95 ? '#d1fae5' : '#fef3c7'};color:${Number(g.akurasi_pct) >= 95 ? '#065f46' : '#92400e'}">${g.akurasi_pct}%</span>` : `<span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-amber-50 text-amber-700">Berjalan</span>`}</td>
+        <td class="py-2 px-3 text-right">${String(g.status) === 'completed' ? `<button onclick="viewOpnameSessionDetail('${g.id}','${esc(g.nomor)}')" class="w-7 h-7 rounded text-muted hover:text-indigo-500" data-tip="Detail"><i class="fa-solid fa-eye text-xs"></i></button>` : ''}</td>
       </tr>`).join('')}</tbody></table></div>`;
-  } catch (e) { box.innerHTML = `<div class="rounded-lg p-3 text-sm" style="background:#fee2e2;color:#991b1b">${esc(e.message)}</div>`; }
+  } catch (e) { box.innerHTML = opnameErrBox(e.message, 'loadOpnameHistory'); }
+}
+// Drill-down: detail per-produk utk 1 sesi, di-fetch ON-DEMAND saat tombol Detail
+// diklik - bukan semua histori produk sekaligus (poin 7).
+async function viewOpnameSessionDetail(sessionId, nomor) {
+  try {
+    const r = await api('stock_opname.list', { limit: 500, extra: JSON.stringify({ session_id: sessionId }) }, { cache:false });
+    const rows = r.items || [];
+    // v6.6.0: sesi sekarang bisa mencakup >1 gudang sekaligus - tampilkan nama gudang per
+    // baris produk HANYA kalau sesi ini memang multi-gudang (hemat tempat utk kasus umum
+    // 1 sesi = 1 gudang, yang mayoritas tidak perlu kolom ini).
+    const distinctWh = new Set(rows.map(x => x.warehouse_id || ''));
+    const multiWh = distinctWh.size > 1;
+    const m = document.createElement('div');
+    m.className = 'modal-bg fixed inset-0 bg-black/40 flex items-center justify-center z-[9500] p-3';
+    m.innerHTML = `<div class="modal-card rounded-xl w-full max-w-lg max-h-[85vh] overflow-y-auto bg-card">
+      <div class="flex items-center justify-between px-5 py-4 border-b sticky top-0 bg-card" style="border-color:var(--border)">
+        <h3 class="font-semibold text-sm text-main">Detail Opname ${esc(nomor)}</h3>
+        <button onclick="closeModal()" class="w-8 h-8 rounded-lg text-muted bg-soft flex items-center justify-center"><i class="fa-solid fa-times"></i></button>
+      </div>
+      <div class="p-4">
+        <table class="w-full text-xs"><thead><tr class="border-b" style="border-color:var(--border)">
+          <th class="text-left py-1.5 text-muted uppercase text-[10px]">Produk</th>
+          <th class="text-center py-1.5 text-muted uppercase text-[10px]">Sistem</th>
+          <th class="text-center py-1.5 text-muted uppercase text-[10px]">Fisik</th>
+          <th class="text-center py-1.5 text-muted uppercase text-[10px]">Selisih</th>
+        </tr></thead>
+        <tbody>${rows.map(x => `<tr class="border-b" style="border-color:var(--border-soft)">
+          <td class="py-1.5"><div class="font-medium text-main">${esc(x.nama)}</div><div class="text-[10px] text-muted">${esc(x.sku)}${multiWh ? ' · <span style="color:var(--primary)">' + esc(x.warehouse_nama || 'Tanpa Gudang') + '</span>' : ''}</div></td>
+          <td class="py-1.5 text-center">${x.stok_sistem}</td>
+          <td class="py-1.5 text-center">${x.stok_fisik}</td>
+          <td class="py-1.5 text-center font-bold" style="color:${Number(x.selisih) === 0 ? 'var(--muted)' : Number(x.selisih) > 0 ? 'var(--success)' : 'var(--danger)'}">${Number(x.selisih) > 0 ? '+' : ''}${x.selisih}</td>
+        </tr>`).join('')}</tbody></table>
+      </div>
+    </div>`;
+    const root = $('#modalRoot'); if (root) { root.innerHTML = ''; root.appendChild(m); }
+  } catch (e) { toast(e.message, 'error'); }
 }
 
 /* ---------- EXPENSES ---------- */
@@ -3805,20 +4754,23 @@ async function renderExpenses(force) {
     const r = await getPageData('expenses', force);
     const items = r.items || [];
     setText('#meta-expenses', `${items.length} dari ${r.total || items.length} pengeluaran`);
-    const total = items.reduce((s, e) => s + Number(e.jumlah||0), 0);
+    // FIX v9.0 [poin 7]: pakai r._statsItems (agregat SELURUH data terfilter) - `items`
+    // sekarang cuma 1 halaman (25 baris).
+    const statsItems = r._statsItems || items;
+    const total = statsItems.reduce((s, e) => s + Number(e.jumlah||0), 0);
     const byKat = {};
-    items.forEach(e => { byKat[e.kategori||'-'] = (byKat[e.kategori||'-']||0) + Number(e.jumlah||0); });
+    statsItems.forEach(e => { byKat[e.kategori||'-'] = (byKat[e.kategori||'-']||0) + Number(e.jumlah||0); });
     const topKat = Object.entries(byKat).sort((a,b) => b[1]-a[1])[0];
     setHtml('#stats-expenses', renderStatsBar([
       { label:'Total Pengeluaran', value: rp(total), color:'var(--danger)' },
-      { label:'Transaksi', value: items.length, color:'var(--primary)' },
-      { label:'Rata-rata', value: rp(items.length ? total/items.length : 0) },
+      { label:'Transaksi', value: r.total ?? statsItems.length, color:'var(--primary)' },
+      { label:'Rata-rata', value: rp(statsItems.length ? total/statsItems.length : 0) },
       { label:'Kategori Terbesar', value: topKat ? esc(topKat[0]) : '-', sub: topKat ? rp(topKat[1]) : '' },
     ]));
     updateFilterBadge('expenses');
     if (!items.length) {
       const f = getFilterState('expenses');
-      const isFiltered = f.search || f.status || f.dateFrom || f.dateTo;
+      const isFiltered = f.search || f.status || f.dateFrom || f.dateTo || Object.values(f.extra||{}).some(v => v);
       setHtml('#expList', isFiltered
         ? `<div class="text-center py-12"><i class="fa-solid fa-filter text-3xl text-muted mb-3 opacity-40"></i><div class="font-semibold text-sm text-main mb-1">Tidak ada data cocok</div><button onclick="resetFilters('expenses');renderExpenses(true)" class="px-4 py-2 rounded-lg text-white text-sm mt-3" style="background:var(--primary)">Reset Filter</button></div>`
         : emptyState('fa-money-bill', 'Belum ada pengeluaran', hasPerm('create','expenses') ? 'Catat Pengeluaran' : null, 'openExpForm()'));
@@ -3843,7 +4795,7 @@ async function renderExpenses(force) {
         <td class="py-2 px-3 text-right font-semibold text-xs" style="color:var(--danger)">${rp(e.jumlah)}</td>
         <td class="py-2 px-3 text-right">${hasPerm('delete','expenses') ? `<button onclick="delExpense('${e.id}')" class="w-7 h-7 rounded text-muted hover:text-red-500"><i class="fa-solid fa-trash text-xs"></i></button>` : ''}</td>
       </tr>`).join('')}</tbody></table></div>
-      <div class="text-xs text-muted mt-3">Menampilkan <b class="text-main">${items.length}</b> dari <b class="text-main">${r.total || items.length}</b> pengeluaran</div>`);
+      ${renderPager('expenses', r)}`);
   } catch (e) { setHtml('#expList', `<div class="rounded-lg p-3 text-sm" style="background:#fee2e2;color:#991b1b">${esc(e.message)}</div>`); }
 }
 async function delExpense(id) {
@@ -3869,11 +4821,38 @@ function openExpForm() {
     </form>
     <div class="flex justify-end gap-2 px-5 py-4 border-t bg-soft" style="border-color:var(--border)">
       <button onclick="closeModal()" class="px-4 py-2 rounded-lg text-soft text-sm bg-card">Batal</button>
-      <button onclick="submitExp()" class="px-4 py-2 rounded-lg text-white text-sm" style="background:var(--primary)">Simpan</button>
+      <button id="expSubmitBtn" onclick="submitExp()" class="px-4 py-2 rounded-lg text-white text-sm" style="background:var(--primary)">Simpan</button>
     </div>
   </div>`;
   const root = $('#modalRoot'); if (root) { root.innerHTML = ''; root.appendChild(m); }
 }
+// FIX v9.0 [CRITICAL/BUG]: submitExp() dipanggil dari onclick tombol "Simpan" di atas,
+// tapi fungsi ini TIDAK PERNAH ADA di file aslinya - artinya selama ini setiap klik
+// "Simpan" pada form Tambah Pengeluaran hanya melempar ReferenceError yang tidak
+// terlihat user (tidak ada toast/pesan apa pun), form diam2 tertutup atau macet tanpa
+// data pernah tersimpan. Ditambahkan di sini, mengikuti pola submitForm/dst yg lain
+// (validasi dasar + withLock anti-double-klik + disable tombol saat proses).
+async function _submitExpImpl() {
+  const f = $('#expForm'); if (!f) return;
+  const btn = $('#expSubmitBtn');
+  if (btn && btn.disabled) return;
+  const d = {}; new FormData(f).forEach((v, k) => d[k] = v);
+  d.jumlah = Number(d.jumlah || 0);
+  if (!d.tanggal) return toast('Tanggal wajib diisi', 'error');
+  if (!d.jumlah || d.jumlah <= 0) return toast('Jumlah harus > 0', 'error');
+  if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-circle-notch spin mr-1"></i>...'; }
+  try {
+    await api('expenses.create', d, { cache:false });
+    toast('Pengeluaran dicatat');
+    closeModal();
+    invalidateCache('expenses'); invalidatePage('expenses'); invalidatePage('dashboard');
+    renderExpenses(true);
+  } catch (e) {
+    toast(e.message, 'error');
+    if (btn) { btn.disabled = false; btn.innerHTML = 'Simpan'; }
+  }
+}
+const submitExp = withLock('submitExp', _submitExpImpl);
 /* ---------- ABSENSI (Attendance) ---------- */
 function attStatusBadge(s) {
   const map = { hadir:['#d1fae5','#065f46','Hadir'], izin:['#fef3c7','#92400e','Izin'], sakit:['#dbeafe','#1e40af','Sakit'], alpa:['#fee2e2','#991b1b','Alpa'] };
@@ -4014,17 +4993,24 @@ function openShiftFlow() {
     <p class="text-xs text-muted mb-3">Hitung modal awal kasir (uang tunai di drawer)</p>
     <input id="shift-modal" type="number" value="0" class="w-full px-3 py-2 border rounded-lg text-sm mb-4" placeholder="Modal awal (Rp)">
     <div class="flex gap-2"><button onclick="closeModal()" class="flex-1 px-4 py-2 rounded-lg text-soft bg-soft">Batal</button>
-    <button onclick="confirmOpenShift()" class="flex-1 px-4 py-2 rounded-lg text-white" style="background:var(--primary)">Buka Shift</button></div>
+    <button id="shiftOpenBtn" onclick="confirmOpenShift()" class="flex-1 px-4 py-2 rounded-lg text-white" style="background:var(--primary)">Buka Shift</button></div>
   </div>`;
   const root = $('#modalRoot'); root.innerHTML=''; root.appendChild(m);
 }
-async function confirmOpenShift() {
+async function _confirmOpenShiftImpl() {
+  const btn = $('#shiftOpenBtn');
+  if (btn && btn.disabled) return;
+  if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-circle-notch spin mr-1"></i>Membuka…'; }
   try {
     await api('cashier.shift-open', { modal_awal:Number($('#shift-modal').value||0) }, { cache:false });
     toast('Shift dibuka');
     closeModal(); renderPOS();
-  } catch(e) { toast(e.message, 'error'); }
+  } catch(e) {
+    toast(e.message, 'error');
+    if (btn) { btn.disabled = false; btn.innerHTML = 'Buka Shift'; }
+  }
 }
+const confirmOpenShift = withLock('confirmOpenShift', _confirmOpenShiftImpl);
 function closeShiftFlow() {
   const m = document.createElement('div');
   m.className = 'modal-bg fixed inset-0 bg-black/40 flex items-center justify-center z-[9500] p-3';
@@ -4034,11 +5020,14 @@ function closeShiftFlow() {
     <input id="shift-fisik" type="number" value="0" class="w-full px-3 py-2 border rounded-lg text-sm mb-3" placeholder="Uang fisik (Rp)">
     <input id="shift-catatan" class="w-full px-3 py-2 border rounded-lg text-sm mb-4" placeholder="Catatan (opsional)">
     <div class="flex gap-2"><button onclick="closeModal()" class="flex-1 px-4 py-2 rounded-lg text-soft bg-soft">Batal</button>
-    <button onclick="confirmCloseShift()" class="flex-1 px-4 py-2 rounded-lg text-white" style="background:var(--danger)">Tutup & Rekap</button></div>
+    <button id="shiftCloseBtn" onclick="confirmCloseShift()" class="flex-1 px-4 py-2 rounded-lg text-white" style="background:var(--danger)">Tutup & Rekap</button></div>
   </div>`;
   const root = $('#modalRoot'); root.innerHTML=''; root.appendChild(m);
 }
-async function confirmCloseShift() {
+async function _confirmCloseShiftImpl() {
+  const btn = $('#shiftCloseBtn');
+  if (btn && btn.disabled) return;
+  if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-circle-notch spin mr-1"></i>Menutup…'; }
   try {
     const r = await api('cashier.shift-close', { uang_fisik:Number($('#shift-fisik').value||0), catatan:$('#shift-catatan').value||'' }, { cache:false });
     const diff = r.selisih;
@@ -4061,8 +5050,13 @@ async function confirmCloseShift() {
       <button onclick="closeModal();renderPOS()" class="w-full mt-4 py-2 rounded-lg text-white" style="background:var(--primary)">OK</button>
     </div>`;
     const root = $('#modalRoot'); root.innerHTML=''; root.appendChild(m);
-  } catch(e) { toast(e.message, 'error'); }
+  } catch(e) {
+    toast(e.message, 'error');
+    if (btn) { btn.disabled = false; btn.innerHTML = 'Tutup & Rekap'; }
+  }
 }
+const confirmCloseShift = withLock('confirmCloseShift', _confirmCloseShiftImpl);
+
 
 /* ---------- REPORTS ---------- */
 async function renderReports() {
@@ -4368,7 +5362,7 @@ async function renderOutlets() {
   try {
     const [o, w, r] = await Promise.all([
       api('outlets.list', {}, { ttl: 30000 }),
-      api('warehouses.list', {}, { ttl: 30000 }),
+      api('warehouses.list', { limit:100 }, { ttl: 60000 }),
       api('racks.list', {}, { ttl: 30000 }),
     ]);
     // FIX v8.8: sebelumnya Outlets/Gudang/Rak cuma bisa DITAMBAH - tidak ada tombol edit
@@ -4401,7 +5395,7 @@ async function openFormOutlet(type, id) {
   if (type === 'racks') {
     fields = [['kode','Kode Rak'],['nama','Nama Rak *']];
     try {
-      const w = await api('warehouses.list', {}, { ttl: 30000 });
+      const w = await api('warehouses.list', { limit:100 }, { ttl: 60000 });
       const curWh = editing ? editing.warehouse_id : '';
       const opts = (w.items || []).map(x => `<option value="${esc(x.id)}" ${String(x.id)===String(curWh)?'selected':''}>${esc(x.nama)}</option>`).join('');
       extraFieldsHtml = `<div class="col-span-2"><label class="block text-[11px] font-medium text-soft mb-1">Gudang *</label><select name="warehouse_id" class="w-full px-3 py-2 border rounded-lg text-sm">${opts || '<option value="">Belum ada gudang</option>'}</select></div>`;
@@ -4420,7 +5414,7 @@ async function openFormOutlet(type, id) {
   </div>`;
   const root = $('#modalRoot'); if (root) { root.innerHTML = ''; root.appendChild(m); }
 }
-async function submitOutlet(type) {
+async function _submitOutletImpl(type) {
   const f = $('#ofForm'); if (!f) return;
   const d = {}; new FormData(f).forEach((v, k) => d[k] = v);
   if (!d.nama) return toast('Nama wajib', 'error');
@@ -4428,7 +5422,7 @@ async function submitOutlet(type) {
   const isEdit = !!d.id;
   if (!isEdit) delete d.id;
   const btn = $('#outletSubmitBtn');
-  if (btn) { if (btn.disabled) return; btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-circle-notch spin mr-1"></i>...'; }
+  if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-circle-notch spin mr-1"></i>...'; }
   try {
     await api(type + (isEdit ? '.update' : '.create'), d, { cache:false });
     toast('Disimpan'); closeModal(); invalidateCache(type); renderOutlets();
@@ -4437,6 +5431,8 @@ async function submitOutlet(type) {
     if (btn) { btn.disabled = false; btn.innerHTML = 'Simpan'; }
   }
 }
+// v9.0: anti double-click - key per `type` (submit "outlets" & "racks" independen).
+const submitOutlet = withLock(type => 'submitOutlet:' + type, _submitOutletImpl);
 async function deleteOutletItem(type, id, nama) {
   const label = type === 'racks' ? 'rak' : (type === 'warehouses' ? 'gudang' : 'outlet');
   if (!confirm(`Hapus ${label} "${nama}"? Produk/data yang masih terkait ${label} ini sebaiknya dipindah dulu.`)) return;
@@ -4546,15 +5542,16 @@ function openUserForm() {
   </div>`;
   const root = $('#modalRoot'); if (root) { root.innerHTML = ''; root.appendChild(m); }
 }
-async function submitUser() {
+async function _submitUserImpl() {
   const f = $('#userForm'); if (!f) return;
+  const btn = $('#userSubmitBtn');
+  if (btn && btn.disabled) return;
   const d = {}; new FormData(f).forEach((v, k) => d[k] = v);
   if (!d.username) return toast('Username wajib diisi', 'error');
   if (!d.password) return toast('Password wajib diisi', 'error');
   if (d.password.length < 6) return toast('Password minimal 6 karakter', 'error');
   if (!/^[a-zA-Z0-9_]+$/.test(d.username)) return toast('Username hanya huruf, angka, underscore', 'error');
   if (d.email && !isValidEmail(d.email)) return toast('Format email tidak valid', 'error');
-  const btn = $('#userSubmitBtn');
   if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-circle-notch spin mr-1"></i>...'; }
   try {
     await api('users.create', d, { cache:false });
@@ -4565,6 +5562,7 @@ async function submitUser() {
     if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-save mr-1"></i>Simpan'; }
   }
 }
+const submitUser = withLock('submitUser', _submitUserImpl);
 async function openEditUser(id) {
   try {
     const users = await api('users.list', {}, { ttl: 5000 });
@@ -4590,13 +5588,14 @@ async function openEditUser(id) {
     const root = $('#modalRoot'); if (root) { root.innerHTML = ''; root.appendChild(m); }
   } catch (e) { toast(e.message, 'error'); }
 }
-async function submitEditUser(id) {
+async function _submitEditUserImpl(id) {
   const f = $('#editUserForm'); if (!f) return;
+  const btn = $('#editUserBtn');
+  if (btn && btn.disabled) return;
   const d = { id };
   new FormData(f).forEach((v, k) => { if (v) d[k] = v; });
   if (d.password && d.password.length < 6) return toast('Password minimal 6 karakter', 'error');
   if (d.email && !isValidEmail(d.email)) return toast('Format email tidak valid', 'error');
-  const btn = $('#editUserBtn');
   if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-circle-notch spin mr-1"></i>...'; }
   try {
     await api('users.update', d, { cache:false });
@@ -4607,6 +5606,7 @@ async function submitEditUser(id) {
     if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-save mr-1"></i>Simpan'; }
   }
 }
+const submitEditUser = withLock('submitEditUser', _submitEditUserImpl);
 async function delUser(id) {
   if (!confirm('Yakin hapus user ini?')) return;
   try {
@@ -4762,13 +5762,14 @@ function openRoleForm(roleId) {
   </div>`;
   const root = $('#modalRoot'); if (root) { root.innerHTML = ''; root.appendChild(m); }
 }
-async function submitRoleForm(roleId) {
+async function _submitRoleFormImpl(roleId) {
   const f = $('#roleForm'); if (!f) return;
+  const btn = $('#roleSubmitBtn');
+  if (btn && btn.disabled) return;
   const d = {}; new FormData(f).forEach((v, k) => d[k] = v);
   if (!d.nama) return toast('Nama role wajib', 'error');
   if (!/^[a-z0-9_]+$/.test(d.nama)) return toast('Nama role hanya huruf kecil, angka, underscore', 'error');
   if (d.nama.length < 3) return toast('Nama role minimal 3 karakter', 'error');
-  const btn = $('#roleSubmitBtn');
   if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-circle-notch spin mr-1"></i>...'; }
   try {
     if (roleId) {
@@ -4790,6 +5791,7 @@ async function submitRoleForm(roleId) {
     if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-save mr-1"></i>Simpan'; }
   }
 }
+const submitRoleForm = withLock('submitRoleForm', _submitRoleFormImpl);
 async function deleteRole(roleId, roleName) {
   const users = await api('users.list', {}, { cache:false }).catch(() => ({ items: [] }));
   const usedBy = (users.items || []).filter(u => u.role === roleName);
