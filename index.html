@@ -2060,6 +2060,13 @@ const MENU = [
     { id:'promotions', icon:'fa-gift', label:'Promo', module:'marketing', rbacModule:'promotions',
       desc:'Buat & kelola promo/diskon untuk pelanggan.' },
   ]},
+  { id:'g-ecosystem', icon:'fa-seedling', label:'Ekosistem Sa-sis', color:'#10b981',
+    desc:'Akses cepat ke aplikasi pendukung dalam satu ekosistem Sa-sis.', children:[
+    { id:'ecosystem-sop', icon:'fa-book-open', label:'Sistem SOP', externalUrl:'https://ezpickupwms.github.io/Sistem-Doc/',
+      desc:'Buka dokumentasi dan sistem SOP operasional di tab baru.' },
+    { id:'ecosystem-flo', icon:'fa-wand-magic-sparkles', label:'Flo Design', externalUrl:'https://gaserp.github.io/flo-design/',
+      desc:'Buka aplikasi Flo Design di tab baru.' },
+  ]},
   { id:'g-system', icon:'fa-gear', label:'Sistem', color:'#64748b',
     desc:'Pengaturan & administrasi sistem secara keseluruhan.', children:[
     { id:'business', icon:'fa-briefcase', label:'Profil Bisnis', rbacModule:'settings',
@@ -2087,6 +2094,8 @@ MENU.forEach(m => {
 function passFilter(item) {
   if (!S.user) return false;
   if (item.module && S.modules[item.module] === false) return false;
+  // External ecosystem links are available to every authenticated user.
+  if (item.externalUrl) return true;
   const moduleKey = item.rbacModule || item.id;
   if (S.user.role === 'owner' || S.user.role === 'admin') return true;
   if (DYNAMIC_ROLES_LOADED) return hasPerm('view', moduleKey);
@@ -2095,11 +2104,14 @@ function passFilter(item) {
 }
 
 function renderNavChild(item) {
-  const active = S.page === item.id;
-  return `<a href="#" data-page="${item.id}" class="nav-item flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-all ${active ? 'active text-[var(--primary)] bg-[var(--primary-soft)] font-semibold' : 'text-soft hover:bg-[var(--bg-soft)]'}" data-tip="${esc(item.desc || item.label)}">
+  const external = !!item.externalUrl;
+  const active = !external && S.page === item.id;
+  const href = external ? esc(item.externalUrl) : '#';
+  const linkAttrs = external ? 'target="_blank" rel="noopener noreferrer"' : `data-page="${item.id}"`;
+  return `<a href="${href}" ${linkAttrs} class="nav-item flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-all ${active ? 'active text-[var(--primary)] bg-[var(--primary-soft)] font-semibold' : 'text-soft hover:bg-[var(--bg-soft)]'}" data-tip="${esc(item.desc || item.label)}">
     <i class="fa-solid ${item.icon} w-4 text-center text-[11px] flex-shrink-0"></i>
     <span class="nav-label truncate flex-1">${esc(item.label)}</span>
-    ${active ? '<span class="w-1 h-1 rounded-full bg-[var(--primary)]"></span>' : ''}</a>`;
+    ${external ? '<i class="fa-solid fa-arrow-up-right-from-square text-[9px] opacity-60"></i>' : (active ? '<span class="w-1 h-1 rounded-full bg-[var(--primary)]"></span>' : '')}</a>`;
 }
 
 function buildMenu() {
